@@ -1,0 +1,26 @@
+.recent-transactions {
+  padding: 0 var(--space-5) var(--space-6);
+}
+
+.recent-transactions__title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.recent-transactions__empty {
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+  background: var(--bg-card);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme='light'] .recent-transactions__empty {
+  border-color: var(--border-subtle);
+}

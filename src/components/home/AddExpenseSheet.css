@@ -1,0 +1,108 @@
+.add-expense {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.add-expense__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.add-expense__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.add-expense__amount-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+}
+
+.add-expense__prefix {
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.add-expense__amount-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.add-expense__input {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: 15px;
+  padding: var(--space-3) var(--space-4);
+  width: 100%;
+}
+
+.add-expense__input:focus,
+.add-expense__amount-input:focus {
+  outline: none;
+}
+
+.add-expense__amount-wrap:focus-within {
+  border-color: var(--accent-primary);
+}
+
+.add-expense__categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.add-expense__category {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.add-expense__category--active {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary-muted);
+  color: var(--text-primary);
+}
+
+.add-expense__error {
+  color: var(--state-danger);
+  font-size: 13px;
+  margin: 0;
+}
+
+.add-expense__submit {
+  padding: var(--space-4);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}

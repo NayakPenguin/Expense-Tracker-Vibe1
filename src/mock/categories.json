@@ -1,0 +1,10 @@
+[
+  { "id": "food", "name": "Food & Dining", "color": "var(--category-1)", "icon": "🍽" },
+  { "id": "transport", "name": "Transport", "color": "var(--category-2)", "icon": "🚕" },
+  { "id": "shopping", "name": "Shopping", "color": "var(--category-3)", "icon": "🛒" },
+  { "id": "health", "name": "Health & Wellness", "color": "var(--category-4)", "icon": "❤️" },
+  { "id": "bills", "name": "Bills & Utilities", "color": "var(--category-5)", "icon": "🧾" },
+  { "id": "entertainment", "name": "Entertainment", "color": "var(--category-6)", "icon": "🎬" },
+  { "id": "personal", "name": "Personal Care", "color": "var(--category-7)", "icon": "💇" },
+  { "id": "other", "name": "Other", "color": "var(--category-8)", "icon": "•••" }
+]

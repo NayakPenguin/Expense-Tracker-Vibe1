@@ -1,0 +1,137 @@
+/*
+  Global design tokens — the single source of truth for color (and supporting
+  spacing/radius/type tokens) across the app.
+
+  RULE: no component should ever hardcode a hex value, rgb(), or inline color.
+  If a color you need doesn't exist here, add it here first, then reference it
+  with var(--token-name).
+
+  Theme switching: default (no attribute) = dark mode. Set data-theme="light"
+  on <html> or <body> to switch to light mode. See ThemeContext in CLAUDE.md §5.
+*/
+
+:root {
+  /* ---------- Core palette (named) ---------- */
+  --color-ink: #0B0B10;       /* base background, dark mode */
+  --color-charcoal: #15151C;  /* card / surface background, dark mode */
+  --color-slate-mist: #9497A6;/* secondary text, muted UI, icons */
+  --color-paper: #F5F5F7;     /* primary text on dark */
+  --color-indigo: #5271FF;    /* primary brand accent — spent-so-far ring arc, primary actions */
+  --color-coral: #FF6B4A;     /* secondary accent — "Days left" numeral, ring's ambient warmth */
+  --color-amber: #FFB648;     /* overpace warning — ring arc once you've passed the pace marker */
+  --color-yellow: #F2C94C;    /* pace-marker tick on the ring (ideal even-spend point) */
+  --color-emerald: #2FBF87;   /* credit transactions, "on track" positive state */
+
+  /* ---------- Semantic tokens (dark mode default) ---------- */
+  --bg-base: var(--color-ink);
+  --bg-card: var(--color-charcoal);
+  --bg-elevated: #1E1E27;
+  --bg-sheet: #1B1B24;         /* bottom sheets / modals */
+
+  --text-primary: var(--color-paper);
+  --text-secondary: var(--color-slate-mist);
+  --text-muted: #6B6E7D;
+  --text-on-accent: #FFFFFF;
+
+  --border-subtle: #232330;
+  --border-strong: #2E2E3C;
+
+  --accent-primary: var(--color-indigo);
+  --accent-primary-muted: rgba(82, 113, 255, 0.16); /* ring track, subtle fills */
+  --accent-secondary: var(--color-coral);
+  --accent-secondary-muted: rgba(255, 107, 74, 0.16);
+  --accent-warning: var(--color-amber);
+  --accent-warning-muted: rgba(255, 182, 72, 0.16);
+  --accent-pace: var(--color-yellow);
+  --accent-positive: var(--color-emerald);
+  --accent-positive-muted: rgba(47, 191, 135, 0.16);
+
+  --state-success: var(--color-emerald); /* used sparingly: credit indicator, positive states */
+  --state-warning: var(--color-amber);
+  --state-danger: #FF5C5C;    /* validation errors only — NOT used for expense amounts */
+
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.45);
+
+  /* ---------- Category palette (fixed order — stable per category) ---------- */
+  --category-1: #FF6B4A; /* coral    — e.g. Food & Dining */
+  --category-2: #5271FF; /* indigo   — e.g. Transport */
+  --category-3: #A26BFA; /* violet   — e.g. Shopping */
+  --category-4: #2FBF87; /* emerald  — e.g. Health & Wellness */
+  --category-5: #FFB648; /* amber    — e.g. Bills & Utilities */
+  --category-6: #2DD4C8; /* teal     — e.g. Entertainment */
+  --category-7: #FF6FA5; /* pink     — e.g. Personal Care */
+  --category-8: #8A8FA3; /* slate    — e.g. Other / Misc */
+
+  /* ---------- Typography ---------- */
+  --font-display: 'Space Grotesk', sans-serif; /* big amounts, headlines — used sparingly */
+  --font-body: 'Inter', sans-serif;             /* everything else */
+
+  /* ---------- Radius scale ---------- */
+  --radius-sm: 8px;   /* chips, buttons */
+  --radius-md: 16px;  /* list rows, inputs */
+  --radius-lg: 24px;  /* cards, sheets */
+  --radius-full: 999px; /* pills, FAB row, avatar */
+
+  /* ---------- Spacing scale ---------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* ---------- Layout ---------- */
+  --app-max-width: 480px; /* constrained column on wide/desktop viewports */
+
+  /* ---------- Ring (signature element) ----------
+     A pace gauge, not a decorative donut: indigo fills up to actual spend,
+     a yellow tick marks where you'd be if spending fell evenly across the
+     month, and the arc past that tick switches to amber. Glow color follows
+     which state is active. */
+  --ring-stroke-width: 14px; /* canonical dial thickness, rounded caps */
+  --ring-glow-indigo: drop-shadow(0 0 8px rgba(82, 113, 255, 0.55));
+  --ring-glow-amber: drop-shadow(0 0 8px rgba(255, 182, 72, 0.55));
+  --ring-ambient-coral: radial-gradient(circle, rgba(255, 107, 74, 0.14) 0%, rgba(255, 107, 74, 0) 70%);
+
+  /* ---------- Icons (lucide-react, colored via currentColor) ---------- */
+  --icon-size-row: 20px;  /* list rows, transaction leading icons */
+  --icon-size-nav: 24px;  /* bottom nav, quick-actions row */
+}
+
+/* ---------- Light mode overrides ---------- */
+[data-theme='light'] {
+  --bg-base: #F7F7FA;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #FFFFFF;
+  --bg-sheet: #FFFFFF;
+
+  --text-primary: #12121A;
+  --text-secondary: #6B6E7D;
+  --text-muted: #9497A6;
+  --text-on-accent: #FFFFFF;
+
+  --border-subtle: #E5E5EC;
+  --border-strong: #D7D7E2;
+
+  --accent-primary-muted: rgba(82, 113, 255, 0.12);
+  --accent-secondary-muted: rgba(255, 107, 74, 0.12);
+  --accent-warning-muted: rgba(255, 182, 72, 0.12);
+  --accent-positive-muted: rgba(47, 191, 135, 0.12);
+
+  --shadow-card: 0 8px 24px rgba(18, 18, 26, 0.08);
+  --shadow-sheet: 0 -8px 32px rgba(18, 18, 26, 0.12);
+
+  --ring-glow-indigo: drop-shadow(0 0 6px rgba(82, 113, 255, 0.35)); /* softer on light bg */
+  --ring-glow-amber: drop-shadow(0 0 6px rgba(255, 182, 72, 0.35));
+  --ring-ambient-coral: radial-gradient(circle, rgba(255, 107, 74, 0.08) 0%, rgba(255, 107, 74, 0) 70%);
+
+  /* accent-primary, accent-secondary, category colors, and state colors
+     stay the same across themes so brand and category identity never shift. */
+}
+
+/* ---------- Utility ---------- */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

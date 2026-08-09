@@ -1,0 +1,9 @@
+/* Profile has only three settings rows — rather than pinning them to the
+   top and leaving a dangling gap above the fixed nav, center the block in
+   the available viewport so the whitespace reads as deliberate rhythm. */
+.profile-page {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

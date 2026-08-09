@@ -1,0 +1,27 @@
+.grouped-list {
+  background: var(--bg-card);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+[data-theme='light'] .grouped-list {
+  border-color: var(--border-subtle);
+}
+
+.grouped-list .list-row {
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.grouped-list .list-row:last-child {
+  border-bottom: none;
+}
+
+[data-theme='light'] .grouped-list .list-row {
+  border-bottom-color: var(--border-subtle);
+}

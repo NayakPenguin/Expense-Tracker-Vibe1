@@ -1,0 +1,33 @@
+.ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring__fill {
+  transition: stroke-dasharray 0.6s ease, stroke-dashoffset 0.6s ease;
+}
+
+.ring__fill--indigo {
+  filter: var(--ring-glow-indigo);
+}
+
+.ring__fill--amber {
+  filter: var(--ring-glow-amber);
+}
+
+.ring__pace-tick {
+  fill: var(--color-yellow);
+  filter: drop-shadow(0 0 3px rgba(242, 201, 76, 0.8));
+}
+
+.ring__content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}

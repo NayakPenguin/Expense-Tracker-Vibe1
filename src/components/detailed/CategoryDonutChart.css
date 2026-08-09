@@ -1,0 +1,43 @@
+.category-donut {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+
+.category-donut__chart {
+  position: relative;
+  width: 220px;
+  height: 220px;
+}
+
+.category-donut__empty-ring {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full);
+  border: 20px solid var(--accent-primary-muted);
+}
+
+.category-donut__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+.category-donut__center-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.category-donut__center-amount {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 4px;
+}

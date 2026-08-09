@@ -1,0 +1,19 @@
+.transaction-item__merchant {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.transaction-item__amount {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.transaction-item__arrow {
+  display: inline-flex;
+  color: var(--text-secondary);
+}
+
+.transaction-item__arrow--credit {
+  color: var(--state-success);
+}
