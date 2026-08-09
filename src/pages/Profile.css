@@ -7,3 +7,33 @@
   flex-direction: column;
   justify-content: center;
 }
+
+.profile-page__sign-out {
+  width: calc(100% - (var(--space-5) * 2));
+  min-height: 48px;
+  margin: var(--space-5);
+  border: 1px solid var(--state-danger);
+  border-radius: var(--radius-md);
+  background: var(--state-danger-muted);
+  color: var(--state-danger);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.profile-page__sign-out:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.profile-page__sign-out:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.profile-page__auth-error {
+  margin: var(--space-4) var(--space-5) 0;
+  color: var(--state-danger);
+  font-size: 13px;
+  line-height: 1.45;
+}

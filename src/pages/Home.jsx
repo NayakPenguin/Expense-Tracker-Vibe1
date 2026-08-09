@@ -7,10 +7,12 @@ import RecentTransactionsList from '../components/home/RecentTransactionsList'
 import CategoryManagerSheet from '../components/profile/CategoryManagerSheet'
 import BudgetEditorSheet from '../components/profile/BudgetEditorSheet'
 import { useAppData } from '../context/AppDataContext'
+import { useAuth } from '../context/AuthContext'
 import { getMonthLabel } from '../utils/format'
 
 export default function Home() {
-  const { user, transactions, categories, budget } = useAppData()
+  const { transactions, categories, budget } = useAppData()
+  const { user } = useAuth()
 
   const [addExpenseOpen, setAddExpenseOpen] = useState(false)
   const [categoryManagerOpen, setCategoryManagerOpen] = useState(false)
@@ -45,7 +47,7 @@ export default function Home() {
 
   return (
     <div>
-      <HomeHeader name={user.name} />
+      <HomeHeader name={user?.displayName?.trim().split(/\s+/)[0] || 'there'} />
 
       <SpendingRingCard
         month={getMonthLabel(now)}

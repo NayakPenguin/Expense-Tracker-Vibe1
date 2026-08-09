@@ -49,6 +49,8 @@
   --state-success: var(--color-emerald); /* used sparingly: credit indicator, positive states */
   --state-warning: var(--color-amber);
   --state-danger: #FF5C5C;    /* validation errors only — NOT used for expense amounts */
+  --state-danger-muted: rgba(255, 92, 92, 0.12);
+  --focus-ring: rgba(82, 113, 255, 0.42);
 
   --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.35);
   --shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.45);
