@@ -23,6 +23,8 @@ function getAuthErrorMessage(error) {
       return 'This domain is not authorized in Firebase Authentication.'
     case 'auth/operation-not-allowed':
       return 'Google sign-in is not enabled for this Firebase project.'
+    case 'auth/configuration-not-found':
+      return 'Firebase Authentication is not set up for this project. Open Authentication in Firebase Console, click Get started, and enable Google.'
     case 'auth/redirect-cancelled-by-user':
       return 'Google sign-in was cancelled. You can try again when you’re ready.'
     default:

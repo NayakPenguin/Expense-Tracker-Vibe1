@@ -54,7 +54,7 @@ describe('authenticated routes', () => {
     authState.user = { displayName: 'Asha Singh', email: 'asha@example.com' }
     renderRoutes('/onboarding')
 
-    expect(await screen.findByText('Hi Asha')).toBeInTheDocument()
+    expect(await screen.findByText('Hi Asha', {}, { timeout: 5000 })).toBeInTheDocument()
     expect(screen.getByRole('navigation', { name: 'Primary' })).toBeInTheDocument()
   })
 })

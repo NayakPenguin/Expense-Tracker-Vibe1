@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { AuthProvider, useAuth } from './AuthContext'
+import { AuthProvider, getAuthErrorMessage, useAuth } from './AuthContext'
 
 const firebaseMocks = vi.hoisted(() => ({
   getRedirectResult: vi.fn(),
@@ -94,5 +94,10 @@ describe('AuthProvider', () => {
 
     await user.click(screen.getByRole('button', { name: 'sign out' }))
     expect(firebaseMocks.firebaseSignOut).toHaveBeenCalledTimes(1)
+  })
+
+  it('explains when Firebase Authentication has not been initialized', () => {
+    expect(getAuthErrorMessage({ code: 'auth/configuration-not-found' }))
+      .toContain('click Get started, and enable Google')
   })
 })
