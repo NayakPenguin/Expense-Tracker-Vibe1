@@ -94,7 +94,7 @@ export default function Onboarding() {
               disabled={isSigningIn}
             >
               <span className="onboarding__google-mark" aria-hidden="true">G</span>
-              {isSigningIn ? 'Opening Google…' : 'Continue with Google'}
+              {isSigningIn ? 'Connecting to Google…' : 'Continue with Google'}
             </button>
           ) : (
             <button

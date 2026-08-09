@@ -1,11 +1,10 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
   browserLocalPersistence,
-  getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
   setPersistence,
-  signInWithRedirect,
+  signInWithPopup,
   signOut as firebaseSignOut,
 } from 'firebase/auth'
 import { auth } from '../lib/firebase'
@@ -27,6 +26,12 @@ function getAuthErrorMessage(error) {
       return 'Firebase Authentication is not set up for this project. Open Authentication in Firebase Console, click Get started, and enable Google.'
     case 'auth/redirect-cancelled-by-user':
       return 'Google sign-in was cancelled. You can try again when you’re ready.'
+    case 'auth/popup-blocked':
+      return 'Your browser blocked the Google sign-in window. Allow popups for this site, then try again.'
+    case 'auth/popup-closed-by-user':
+      return 'The Google sign-in window was closed before login finished. Please try again.'
+    case 'auth/cancelled-popup-request':
+      return 'A Google sign-in window is already open. Finish that login or try again.'
     default:
       return 'We couldn’t sign you in with Google. Please try again.'
   }
@@ -62,13 +67,6 @@ export function AuthProvider({ children }) {
       }
     )
 
-    getRedirectResult(auth).catch((error) => {
-      if (!mounted) return
-      setAuthError(getAuthErrorMessage(error))
-      setIsAuthLoading(false)
-      setIsSigningIn(false)
-    })
-
     return () => {
       mounted = false
       unsubscribe()
@@ -88,7 +86,9 @@ export function AuthProvider({ children }) {
       await setPersistence(auth, browserLocalPersistence)
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
-      await signInWithRedirect(auth, provider)
+      const credential = await signInWithPopup(auth, provider)
+      setUser(credential.user)
+      setIsSigningIn(false)
     } catch (error) {
       setAuthError(getAuthErrorMessage(error))
       setIsSigningIn(false)

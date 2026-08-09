@@ -56,6 +56,6 @@ describe('Onboarding', () => {
     await user.click(screen.getByRole('button', { name: 'Next' }))
 
     expect(screen.getByRole('alert')).toHaveTextContent('not authorized')
-    expect(screen.getByRole('button', { name: 'Opening Google…' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Connecting to Google…' })).toBeDisabled()
   })
 })

@@ -4,10 +4,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { AuthProvider, getAuthErrorMessage, useAuth } from './AuthContext'
 
 const firebaseMocks = vi.hoisted(() => ({
-  getRedirectResult: vi.fn(),
   onAuthStateChanged: vi.fn(),
   setPersistence: vi.fn(),
-  signInWithRedirect: vi.fn(),
+  signInWithPopup: vi.fn(),
   firebaseSignOut: vi.fn(),
   setCustomParameters: vi.fn(),
 }))
@@ -16,13 +15,12 @@ vi.mock('../lib/firebase', () => ({ auth: { name: 'test-auth' } }))
 
 vi.mock('firebase/auth', () => ({
   browserLocalPersistence: { name: 'local' },
-  getRedirectResult: firebaseMocks.getRedirectResult,
   GoogleAuthProvider: class {
     setCustomParameters = firebaseMocks.setCustomParameters
   },
   onAuthStateChanged: firebaseMocks.onAuthStateChanged,
   setPersistence: firebaseMocks.setPersistence,
-  signInWithRedirect: firebaseMocks.signInWithRedirect,
+  signInWithPopup: firebaseMocks.signInWithPopup,
   signOut: firebaseMocks.firebaseSignOut,
 }))
 
@@ -41,9 +39,10 @@ function AuthHarness() {
 describe('AuthProvider', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    firebaseMocks.getRedirectResult.mockResolvedValue(null)
     firebaseMocks.setPersistence.mockResolvedValue(undefined)
-    firebaseMocks.signInWithRedirect.mockResolvedValue(undefined)
+    firebaseMocks.signInWithPopup.mockResolvedValue({
+      user: { email: 'signed-in@example.com' },
+    })
     firebaseMocks.firebaseSignOut.mockResolvedValue(undefined)
     firebaseMocks.onAuthStateChanged.mockImplementation((_auth, next) => {
       next(null)
@@ -61,7 +60,7 @@ describe('AuthProvider', () => {
     expect(await screen.findByText('asha@example.com')).toBeInTheDocument()
   })
 
-  it('sets local persistence before starting the Google redirect', async () => {
+  it('sets local persistence before opening Google sign-in', async () => {
     const user = userEvent.setup()
     render(<AuthProvider><AuthHarness /></AuthProvider>)
     await screen.findByText('signed-out')
@@ -69,10 +68,11 @@ describe('AuthProvider', () => {
     await user.click(screen.getByRole('button', { name: 'sign in' }))
 
     expect(firebaseMocks.setPersistence).toHaveBeenCalledTimes(1)
-    expect(firebaseMocks.signInWithRedirect).toHaveBeenCalledTimes(1)
+    expect(firebaseMocks.signInWithPopup).toHaveBeenCalledTimes(1)
     expect(firebaseMocks.setPersistence.mock.invocationCallOrder[0])
-      .toBeLessThan(firebaseMocks.signInWithRedirect.mock.invocationCallOrder[0])
+      .toBeLessThan(firebaseMocks.signInWithPopup.mock.invocationCallOrder[0])
     expect(firebaseMocks.setCustomParameters).toHaveBeenCalledWith({ prompt: 'select_account' })
+    expect(await screen.findByText('signed-in@example.com')).toBeInTheDocument()
   })
 
   it('surfaces a retryable sign-in failure', async () => {
