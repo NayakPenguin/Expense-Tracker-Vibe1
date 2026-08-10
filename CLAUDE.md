@@ -1,6 +1,16 @@
 # Expense Tracker — Project Context (Phase 1 UI + Phase 2 Auth Slice)
 
-> **Current override (Phase 2 auth slice):** Firebase Google Authentication and a three-step onboarding flow are now implemented. Authentication is required for the three app routes. Google supplies the read-only profile identity, and Profile includes sign-out. Transactions, categories, budgets, and theme settings remain fixture-backed client state and are not persisted. This override supersedes older “no auth” statements below; all other Phase 1 design rules remain active.
+> **Current override (Phase 2 auth slice):** Firebase Authentication and a three-step onboarding flow are now implemented. Authentication is required for the three app routes, and Profile includes sign-out.
+>
+> **Sign-in providers (email added 2026-08-10):** Google, plus email/password with password reset, on a dedicated `/signin` screen reached from onboarding's last step. Profile identity stays read-only. Google supplies `displayName`/`photoURL` automatically; email sign-up collects a name and writes it via `updateProfile`, because an account without a `displayName` falls through to placeholder copy in both the Home greeting and the Profile header — keep that write if the sign-up flow is ever reworked.
+>
+> **Persistence — Cloud Firestore (moved off localStorage 2026-08-10):** transactions, categories, and budget live in Firestore under `users/{uid}`, with `categories` and `transactions` as subcollections. The schema and every read/write is in `src/lib/db.js`; nothing else may import `firebase/firestore` directly. Security rules (`firestore.rules`, published) allow a user to touch only their own `users/{uid}` tree and shape-check every write. Offline persistence is on, so the app works without a connection and reconciles later. Theme is the one thing still in `localStorage` — it is per-device, not per-account. Deleting a category reassigns its transactions to `other`, which is therefore not deletable.
+>
+> **Reads are bounded — keep them that way.** The live subscription is capped at the 200 most recent transactions, which is all Home can use. Anything wider goes through `fetchTransactionsInRange`, a one-off query with its own cap, not a listener. Never subscribe to an uncapped collection: cost and startup latency would then grow with the user's entire history, forever. `income`/`incomeHidden` were removed from the schema on 2026-08-10 — §7.1's masked-income and "safe to spend/day" features were never built, and the dead fields were dropped rather than carried into real user data.
+>
+> **First-run setup:** `users/{uid}.hasCompletedSetup` gates a two-step `/setup` flow (budget, then category customization). `AppRoutes` redirects any signed-in account with `hasCompletedSetup !== true` there, so a new user cannot reach Home until it is done. The eight default categories are seeded at account creation in `ensureUserDocument`; setup lets the user delete the ones they don't want and add their own.
+>
+> This override supersedes older “no auth” statements below, §2's “they don't need to persist across reloads yet,” and §5's “no persistence needed yet.” All other Phase 1 design rules remain active.
 
 This file is the persistent context for AI coding assistants (Claude Code or similar) working on this repo. Read this fully before writing any code. Keep it updated as the project evolves — Phase 2 (backend/auth/data) and Phase 3 (collaborative features) will be appended later; **do not build toward them yet.**
 
@@ -31,7 +41,7 @@ A reference screenshot of an existing app was used for structural inspiration on
 
 - **React** with **Vite**
 - **React Router** for the three top-level routes (Home, Detailed View, Profile)
-- **Firebase Authentication** with Google as the only sign-in provider; no Firestore or other Firebase products yet
+- **Firebase Authentication** with two sign-in providers — Google, and email/password with password reset; no Firestore or other Firebase products yet
 - **Vitest + React Testing Library** for authentication, routing, and onboarding coverage
 - **Plain CSS + CSS custom properties** — no Tailwind, no CSS-in-JS. Import `colors.css` (or `theme.css`) globally and use `var(--token-name)` everywhere. See §5.
 - **Recharts** (or a comparably lightweight React chart lib) for the donut charts
@@ -95,7 +105,7 @@ All icons are [lucide-react](https://lucide.dev), colored via `currentColor` —
 - Import it once, globally (e.g. in `main.jsx` or `index.css`).
 - Dark mode is the default and lives under `:root`. Light mode overrides live under `[data-theme="light"]`.
 - Theme switching (Profile → dark/light toggle) works by setting `data-theme="light"` or removing it on `<html>` — implement with a small `ThemeContext`, default to dark, no persistence needed yet (fine to reset to dark on reload in Phase 1).
-- Category colors are a fixed 8-color palette (`--category-1` … `--category-8`), assigned to categories in a stable order so a category's color never changes between screens.
+- Category colors are **derived, never user-chosen**, and no two categories ever share one. `src/utils/categoryColors.js` hands out the curated 8-color palette (`--category-1` … `--category-8`) in order, then generates further colors at the midpoint of the widest unused gap on the hue wheel. Deleting a category frees its color for reuse. A category's color is set once at creation and never changes — editing a category touches name and icon only, so its color stays stable across screens. Generated colors are inline `hsl()`, the one deliberate exception to §4.2's no-inline-color rule, since the set is unbounded and cannot be enumerated in `colors.css` ahead of time.
 
 ## 6. Navigation
 

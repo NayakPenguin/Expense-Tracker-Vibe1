@@ -4,12 +4,13 @@ import { getCategoryIcon } from '../../utils/categoryIcons'
 import { formatCurrency } from '../../utils/format'
 import './TransactionListItem.css'
 
-export default function TransactionListItem({ transaction, category }) {
+export default function TransactionListItem({ transaction, category, onSelect }) {
   const isCredit = transaction.direction === 'credit'
   const CategoryIcon = getCategoryIcon(transaction.categoryId)
 
   return (
     <ListRow
+      onClick={onSelect ? () => onSelect(transaction) : undefined}
       leading={<CategoryIcon size={20} strokeWidth={2} aria-hidden="true" />}
       title={<span className="transaction-item__merchant">{transaction.merchant}</span>}
       subtitle={transaction.note}

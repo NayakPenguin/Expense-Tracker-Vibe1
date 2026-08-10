@@ -11,6 +11,18 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <!--
+      Apply the saved theme before first paint. React mounts too late to avoid
+      a dark flash on light-mode loads. Key must match THEME_STORAGE_KEY in
+      src/context/ThemeContext.jsx.
+    -->
+    <script>
+      try {
+        if (localStorage.getItem('expense-tracker:theme') === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light')
+        }
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

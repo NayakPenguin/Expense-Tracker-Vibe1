@@ -1,5 +1,6 @@
-import { render, screen } from '@testing-library/react'
+import { render as rtlRender, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import Onboarding from './Onboarding'
 
@@ -10,6 +11,11 @@ const authState = vi.hoisted(() => ({
 }))
 
 vi.mock('../context/AuthContext', () => ({ useAuth: () => authState }))
+
+// Onboarding links to /signin, so it needs a router in scope.
+function render(ui) {
+  return rtlRender(<MemoryRouter>{ui}</MemoryRouter>)
+}
 
 describe('Onboarding', () => {
   beforeEach(() => {
@@ -44,6 +50,21 @@ describe('Onboarding', () => {
     await user.click(screen.getByRole('button', { name: 'Continue with Google' }))
 
     expect(authState.signInWithGoogle).toHaveBeenCalledTimes(1)
+  })
+
+  it('offers the email route only on the final step', async () => {
+    const user = userEvent.setup()
+    render(<Onboarding />)
+
+    expect(screen.queryByRole('link', { name: 'Use email instead' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+
+    expect(screen.getByRole('link', { name: 'Use email instead' })).toHaveAttribute(
+      'href',
+      '/signin'
+    )
   })
 
   it('shows auth errors and disables sign-in while redirecting', async () => {

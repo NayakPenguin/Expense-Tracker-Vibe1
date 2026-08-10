@@ -1,0 +1,70 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Ownership is the isolation boundary; the shape checks below stop a user
+    // corrupting or bloating their own account through a hand-rolled client.
+    match /users/{userId} {
+
+      function validSettings() {
+        return incoming().monthlyBudget is number
+          && incoming().monthlyBudget >= 0
+          && incoming().monthlyBudget <= 1000000000
+          && incoming().hasCompletedSetup is bool
+          && (!('displayName' in incoming()) || incoming().displayName == null
+              || (incoming().displayName is string && incoming().displayName.size() <= 200))
+          && (!('email' in incoming()) || incoming().email == null
+              || (incoming().email is string && incoming().email.size() <= 320));
+      }
+
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && validSettings();
+      allow delete: if isOwner(userId);
+
+      match /categories/{categoryId} {
+        function validCategory() {
+          return incoming().name is string
+            && incoming().name.size() > 0
+            && incoming().name.size() <= 60
+            && incoming().color is string
+            && incoming().color.size() <= 60
+            && (!('icon' in incoming()) || incoming().icon is string)
+            && (!('order' in incoming()) || incoming().order is number);
+        }
+
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId) && validCategory();
+      }
+
+      match /transactions/{transactionId} {
+        function validTransaction() {
+          return incoming().amount is number
+            && incoming().amount > 0
+            && incoming().amount <= 1000000000
+            && incoming().categoryId is string
+            && incoming().categoryId.size() <= 128
+            // YYYY-MM-DD; range queries depend on this format holding.
+            && incoming().date is string
+            && incoming().date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+            && incoming().direction in ['debit', 'credit']
+            && (!('merchant' in incoming()) || incoming().merchant == null
+                || (incoming().merchant is string && incoming().merchant.size() <= 120))
+            && (!('note' in incoming()) || incoming().note == null
+                || (incoming().note is string && incoming().note.size() <= 500));
+        }
+
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId) && validTransaction();
+      }
+    }
+  }
+}

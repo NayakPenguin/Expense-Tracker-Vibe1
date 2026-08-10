@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, ChartPie, Gauge, ReceiptText } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import './Onboarding.css'
@@ -108,8 +109,15 @@ export default function Onboarding() {
           )}
         </div>
 
+        {isLastStep ? (
+          <Link className="onboarding__alt-auth" to="/signin">
+            Use email instead
+          </Link>
+        ) : null}
+
         <p className="onboarding__privacy">
-          We use Google only to identify your account. Your financial data stays in this browser for now.
+          We only use your account to identify you. Your expenses are private to you and synced
+          across your devices.
         </p>
       </section>
     </main>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import DateRangeSelector from '../components/detailed/DateRangeSelector'
@@ -6,20 +6,19 @@ import CategoryDonutChart from '../components/detailed/CategoryDonutChart'
 import CategoryLegendList from '../components/detailed/CategoryLegendList'
 import { useAppData } from '../context/AppDataContext'
 import { getRangeBounds, isWithinRange } from '../utils/dateRanges'
+import { todayISO } from '../utils/dates'
 import './DetailedView.css'
-
-function todayISO() {
-  return new Date().toISOString().slice(0, 10)
-}
 
 export default function DetailedView() {
   const navigate = useNavigate()
-  const { transactions, categories } = useAppData()
+  const { categories, fetchTransactionsInRange } = useAppData()
 
   const [selectedPreset, setSelectedPreset] = useState('thisMonth')
   const [customStart, setCustomStart] = useState(todayISO())
   const [customEnd, setCustomEnd] = useState(todayISO())
   const [highlightedCategoryId, setHighlightedCategoryId] = useState(null)
+  const [rangeTransactions, setRangeTransactions] = useState([])
+  const [isRangeLoading, setIsRangeLoading] = useState(true)
 
   const bounds = useMemo(() => {
     if (selectedPreset === 'custom') {
@@ -28,8 +27,34 @@ export default function DetailedView() {
     return getRangeBounds(selectedPreset)
   }, [selectedPreset, customStart, customEnd])
 
+  // The shared subscription is capped at the most recent transactions, so a
+  // wide range has to be fetched on its own rather than filtered from context.
+  useEffect(() => {
+    let cancelled = false
+    setIsRangeLoading(true)
+
+    fetchTransactionsInRange(bounds.start, bounds.end)
+      .then((rows) => {
+        if (!cancelled) {
+          setRangeTransactions(rows)
+          setIsRangeLoading(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setRangeTransactions([])
+          setIsRangeLoading(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bounds.start, bounds.end])
+
   const { legendData, total } = useMemo(() => {
-    const inRange = transactions.filter(
+    const inRange = rangeTransactions.filter(
       (tx) => tx.direction === 'debit' && isWithinRange(tx.date, bounds.start, bounds.end)
     )
     const totalAmount = inRange.reduce((sum, tx) => sum + tx.amount, 0)
@@ -54,7 +79,7 @@ export default function DetailedView() {
       .sort((a, b) => b.amount - a.amount)
 
     return { legendData: rows, total: totalAmount }
-  }, [transactions, categories, bounds])
+  }, [rangeTransactions, categories, bounds])
 
   return (
     <div>
@@ -83,16 +108,22 @@ export default function DetailedView() {
       />
 
       <CategoryDonutChart
-        data={legendData}
-        total={total}
+        data={isRangeLoading ? [] : legendData}
+        total={isRangeLoading ? 0 : total}
         selectedId={highlightedCategoryId}
       />
 
-      <CategoryLegendList
-        data={legendData}
-        selectedId={highlightedCategoryId}
-        onSelect={setHighlightedCategoryId}
-      />
+      {isRangeLoading ? (
+        <p className="detailed-loading" aria-live="polite">
+          Loading this range…
+        </p>
+      ) : (
+        <CategoryLegendList
+          data={legendData}
+          selectedId={highlightedCategoryId}
+          onSelect={setHighlightedCategoryId}
+        />
+      )}
     </div>
   )
 }

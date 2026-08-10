@@ -1,13 +1,11 @@
+import { toLocalISO as toISO } from './dates'
+
 export const RANGE_PRESETS = [
   { id: 'thisMonth', label: 'This Month' },
   { id: 'last3Months', label: 'Last 3 Mo' },
   { id: 'thisYear', label: 'This Year' },
   { id: 'custom', label: 'Custom' },
 ]
-
-function toISO(date) {
-  return date.toISOString().slice(0, 10)
-}
 
 export function getRangeBounds(presetId, now = new Date()) {
   const year = now.getFullYear()

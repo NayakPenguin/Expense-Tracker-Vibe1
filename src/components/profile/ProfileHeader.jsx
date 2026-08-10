@@ -23,7 +23,7 @@ export default function ProfileHeader() {
           <User size={36} strokeWidth={1.75} aria-hidden="true" />
         )}
       </div>
-      <h1 className="profile-header__name">{user?.displayName || 'Google user'}</h1>
+      <h1 className="profile-header__name">{user?.displayName || 'Your account'}</h1>
       {user?.email ? <p className="profile-header__email">{user.email}</p> : null}
     </header>
   )

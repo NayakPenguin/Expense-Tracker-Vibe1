@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Pencil, Trash2 } from 'lucide-react'
 import Sheet from '../shared/Sheet'
-import { useAppData } from '../../context/AppDataContext'
+import { FALLBACK_CATEGORY_ID, useAppData } from '../../context/AppDataContext'
 import { getCategoryIcon } from '../../utils/categoryIcons'
+import { nextCategoryColor } from '../../utils/categoryColors'
 import './CategoryManagerSheet.css'
 
 const DEFAULT_CATEGORY_IDS = new Set([
@@ -16,38 +17,44 @@ const DEFAULT_CATEGORY_IDS = new Set([
   'other',
 ])
 
-const PALETTE = [
-  'var(--category-1)',
-  'var(--category-2)',
-  'var(--category-3)',
-  'var(--category-4)',
-  'var(--category-5)',
-  'var(--category-6)',
-  'var(--category-7)',
-  'var(--category-8)',
-]
+function deleteWarning(count) {
+  if (count === 0) return 'No expenses use this category.'
+  if (count === 1) return '1 expense moves to Other.'
+  return `${count} expenses move to Other.`
+}
 
 export default function CategoryManagerSheet({ open, onClose }) {
-  const { categories, addCategory, updateCategory, deleteCategory } = useAppData()
+  const {
+    categories,
+    addCategory,
+    updateCategory,
+    deleteCategory,
+    countTransactionsInCategory,
+  } = useAppData()
   const [editingId, setEditingId] = useState(null)
+  const [pendingDeleteId, setPendingDeleteId] = useState(null)
   const [name, setName] = useState('')
   const [icon, setIcon] = useState('🏷')
-  const [color, setColor] = useState(PALETTE[0])
   const [error, setError] = useState('')
 
   const resetForm = () => {
     setEditingId(null)
     setName('')
     setIcon('🏷')
-    setColor(PALETTE[0])
     setError('')
+  }
+
+  const confirmDelete = (id) => {
+    deleteCategory(id)
+    setPendingDeleteId(null)
+    if (editingId === id) resetForm()
   }
 
   const startEdit = (category) => {
     setEditingId(category.id)
+    setPendingDeleteId(null)
     setName(category.name)
     setIcon(category.icon)
-    setColor(category.color)
     setError('')
   }
 
@@ -57,15 +64,18 @@ export default function CategoryManagerSheet({ open, onClose }) {
       return
     }
     if (editingId) {
-      updateCategory(editingId, { name: name.trim(), icon, color })
+      // Colour is assigned once at creation and never re-picked, so an edit
+      // must not disturb it — a category keeps the same colour everywhere.
+      updateCategory(editingId, { name: name.trim(), icon })
     } else {
-      addCategory({ name: name.trim(), icon, color })
+      addCategory({ name: name.trim(), icon, color: nextCategoryColor(categories) })
     }
     resetForm()
   }
 
   const handleClose = () => {
     resetForm()
+    setPendingDeleteId(null)
     onClose()
   }
 
@@ -75,35 +85,72 @@ export default function CategoryManagerSheet({ open, onClose }) {
         {categories.map((cat) => {
           const isDefault = DEFAULT_CATEGORY_IDS.has(cat.id)
           const CategoryIcon = isDefault ? getCategoryIcon(cat.id) : null
+          const isFallback = cat.id === FALLBACK_CATEGORY_ID
+          const isConfirming = pendingDeleteId === cat.id
           return (
-            <li key={cat.id} className="category-manager__row">
-              <span
-                className="category-manager__swatch"
-                style={{ background: cat.color }}
-              >
-                {CategoryIcon ? (
-                  <CategoryIcon size={16} strokeWidth={2} aria-hidden="true" />
-                ) : (
-                  cat.icon
+            <li
+              key={cat.id}
+              className={
+                'category-manager__row' +
+                (isConfirming ? ' category-manager__row--confirming' : '')
+              }
+            >
+              <div className="category-manager__row-main">
+                <span
+                  className="category-manager__swatch"
+                  style={{ background: cat.color }}
+                >
+                  {CategoryIcon ? (
+                    <CategoryIcon size={16} strokeWidth={2} aria-hidden="true" />
+                  ) : (
+                    cat.icon
+                  )}
+                </span>
+                <span className="category-manager__name">{cat.name}</span>
+                <button
+                  type="button"
+                  className="category-manager__action"
+                  onClick={() => startEdit(cat)}
+                  aria-label={`Edit ${cat.name}`}
+                >
+                  <Pencil size={15} strokeWidth={2} aria-hidden="true" />
+                </button>
+                {/* Other is where deleted categories' expenses land, so it stays. */}
+                {isFallback ? null : (
+                  <button
+                    type="button"
+                    className="category-manager__action category-manager__action--danger"
+                    onClick={() => setPendingDeleteId(cat.id)}
+                    aria-label={`Delete ${cat.name}`}
+                  >
+                    <Trash2 size={15} strokeWidth={2} aria-hidden="true" />
+                  </button>
                 )}
-              </span>
-              <span className="category-manager__name">{cat.name}</span>
-              <button
-                type="button"
-                className="category-manager__action"
-                onClick={() => startEdit(cat)}
-                aria-label={`Edit ${cat.name}`}
-              >
-                <Pencil size={15} strokeWidth={2} aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                className="category-manager__action category-manager__action--danger"
-                onClick={() => deleteCategory(cat.id)}
-                aria-label={`Delete ${cat.name}`}
-              >
-                <Trash2 size={15} strokeWidth={2} aria-hidden="true" />
-              </button>
+              </div>
+
+              {isConfirming ? (
+                <div className="category-manager__confirm">
+                  <p className="category-manager__confirm-text">
+                    Delete {cat.name}? {deleteWarning(countTransactionsInCategory(cat.id))}
+                  </p>
+                  <div className="category-manager__confirm-actions">
+                    <button
+                      type="button"
+                      className="category-manager__confirm-cancel"
+                      onClick={() => setPendingDeleteId(null)}
+                    >
+                      Keep
+                    </button>
+                    <button
+                      type="button"
+                      className="category-manager__confirm-delete"
+                      onClick={() => confirmDelete(cat.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ) : null}
             </li>
           )
         })}
@@ -131,21 +178,6 @@ export default function CategoryManagerSheet({ open, onClose }) {
             placeholder="Category name"
             aria-label="Category name"
           />
-        </div>
-        <div className="category-manager__palette">
-          {PALETTE.map((swatch) => (
-            <button
-              key={swatch}
-              type="button"
-              className={
-                'category-manager__palette-dot' +
-                (swatch === color ? ' category-manager__palette-dot--active' : '')
-              }
-              style={{ background: swatch }}
-              onClick={() => setColor(swatch)}
-              aria-label={`Choose color ${swatch}`}
-            />
-          ))}
         </div>
         {error ? <p className="category-manager__error">{error}</p> : null}
         <div className="category-manager__form-actions">

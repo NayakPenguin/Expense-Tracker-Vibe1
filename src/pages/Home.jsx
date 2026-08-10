@@ -15,6 +15,7 @@ export default function Home() {
   const { user } = useAuth()
 
   const [addExpenseOpen, setAddExpenseOpen] = useState(false)
+  const [editingTransaction, setEditingTransaction] = useState(null)
   const [categoryManagerOpen, setCategoryManagerOpen] = useState(false)
   const [budgetEditorOpen, setBudgetEditorOpen] = useState(false)
 
@@ -68,9 +69,18 @@ export default function Home() {
       <RecentTransactionsList
         transactions={sortedTransactions.slice(0, 8)}
         categories={categories}
+        onSelect={setEditingTransaction}
       />
 
-      <AddExpenseSheet open={addExpenseOpen} onClose={() => setAddExpenseOpen(false)} />
+      {/* One sheet, two modes — a transaction present means edit. */}
+      <AddExpenseSheet
+        open={addExpenseOpen || Boolean(editingTransaction)}
+        transaction={editingTransaction}
+        onClose={() => {
+          setAddExpenseOpen(false)
+          setEditingTransaction(null)
+        }}
+      />
       <CategoryManagerSheet
         open={categoryManagerOpen}
         onClose={() => setCategoryManagerOpen(false)}

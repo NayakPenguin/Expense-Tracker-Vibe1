@@ -2,7 +2,7 @@ import GroupedList from '../shared/GroupedList'
 import TransactionListItem from './TransactionListItem'
 import './RecentTransactionsList.css'
 
-export default function RecentTransactionsList({ transactions, categories }) {
+export default function RecentTransactionsList({ transactions, categories, onSelect }) {
   const categoryById = Object.fromEntries(categories.map((c) => [c.id, c]))
 
   return (
@@ -19,6 +19,7 @@ export default function RecentTransactionsList({ transactions, categories }) {
               key={tx.id}
               transaction={tx}
               category={categoryById[tx.categoryId]}
+              onSelect={onSelect}
             />
           ))}
         </GroupedList>

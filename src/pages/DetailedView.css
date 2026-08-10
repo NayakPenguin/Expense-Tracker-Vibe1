@@ -26,3 +26,10 @@
   font-weight: 600;
   color: var(--text-primary);
 }
+
+.detailed-loading {
+  padding: var(--space-5) 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-align: center;
+}

@@ -106,3 +106,68 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+.add-expense__delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 46px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--state-danger);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-expense__confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--state-danger);
+  border-radius: var(--radius-md);
+  background: var(--state-danger-muted);
+}
+
+.add-expense__confirm-text {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.add-expense__confirm-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.add-expense__confirm-cancel,
+.add-expense__confirm-delete {
+  flex: 1;
+  min-height: 42px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-expense__confirm-cancel {
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.add-expense__confirm-delete {
+  border: none;
+  background: var(--state-danger);
+  color: var(--text-on-accent);
+}
+
+.add-expense__delete:focus-visible,
+.add-expense__confirm-cancel:focus-visible,
+.add-expense__confirm-delete:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}

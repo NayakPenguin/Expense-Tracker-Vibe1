@@ -1,0 +1,299 @@
+.signin-shell {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 12%, var(--accent-primary-muted), transparent 38%),
+    var(--bg-base);
+}
+
+.signin {
+  width: 100%;
+  max-width: var(--app-max-width);
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: calc(var(--space-5) + env(safe-area-inset-top, 0px)) var(--space-5)
+    calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+}
+
+.signin__top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.signin__back {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.signin__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.signin__brand-mark {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  font-family: var(--font-body);
+  font-size: 18px;
+}
+
+.signin__copy {
+  margin-top: var(--space-6);
+}
+
+.signin__copy h1 {
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: clamp(26px, 7.5vw, 34px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.signin__copy h1:focus {
+  outline: none;
+}
+
+.signin__subtitle {
+  margin-top: var(--space-2);
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.signin__tabs {
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-5);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+}
+
+.signin__tab {
+  flex: 1;
+  min-height: 40px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.signin__tab--active {
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+}
+
+.signin__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.signin__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.signin__label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.signin__input {
+  min-height: 50px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: 15px;
+}
+
+.signin__password-wrap {
+  position: relative;
+  display: flex;
+}
+
+.signin__input--password {
+  flex: 1;
+  /* Room for the toggle so long passwords don't run under it. */
+  padding-right: calc(var(--space-4) + 44px);
+}
+
+.signin__password-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 48px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.signin__password-toggle:hover {
+  color: var(--text-primary);
+}
+
+.signin__input::placeholder {
+  color: var(--text-muted);
+}
+
+.signin__input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.signin__error {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--state-danger);
+  border-radius: var(--radius-md);
+  background: var(--state-danger-muted);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.signin__notice {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--accent-positive);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.signin__submit {
+  min-height: 52px;
+  margin-top: var(--space-1);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.signin__submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.signin__link-button {
+  align-self: center;
+  border: none;
+  background: none;
+  color: var(--accent-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--space-2);
+}
+
+.signin__divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-5) 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.signin__divider::before,
+.signin__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.signin__google {
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.signin__google:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.signin__google-mark {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-full);
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.signin__submit:focus-visible,
+.signin__google:focus-visible,
+.signin__tab:focus-visible,
+.signin__back:focus-visible,
+.signin__password-toggle:focus-visible,
+.signin__link-button:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.signin__privacy {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+@media (min-width: 481px) {
+  .signin {
+    box-shadow: var(--shadow-card);
+  }
+}

@@ -1,11 +1,17 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
   browserLocalPersistence,
+  createUserWithEmailAndPassword,
+  getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
+  sendPasswordResetEmail,
   setPersistence,
+  signInWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
   signOut as firebaseSignOut,
+  updateProfile,
 } from 'firebase/auth'
 import { auth } from '../lib/firebase'
 
@@ -37,11 +43,45 @@ function getAuthErrorMessage(error) {
   }
 }
 
+function getEmailAuthErrorMessage(error) {
+  switch (error?.code) {
+    case 'auth/email-already-in-use':
+      return 'That email already has an account. Sign in instead.'
+    case 'auth/invalid-email':
+      return 'Enter a valid email address.'
+    case 'auth/weak-password':
+      return 'Use at least 6 characters for your password.'
+    case 'auth/missing-password':
+      return 'Enter your password to continue.'
+    // Firebase returns invalid-credential for both a wrong password and an
+    // unknown email when enumeration protection is on. The message stays
+    // deliberately vague for the same reason.
+    case 'auth/invalid-credential':
+    case 'auth/wrong-password':
+    case 'auth/user-not-found':
+      return 'That email and password don’t match an account. Check both and try again.'
+    case 'auth/too-many-requests':
+      return 'Too many attempts. Wait a few minutes, then try again.'
+    case 'auth/user-disabled':
+      return 'This account has been disabled.'
+    case 'auth/network-request-failed':
+      return 'Check your internet connection, then try again.'
+    case 'auth/operation-not-allowed':
+      return 'Email sign-in is not enabled for this Firebase project.'
+    default:
+      return 'Something went wrong. Please try again.'
+  }
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [isAuthLoading, setIsAuthLoading] = useState(true)
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [authError, setAuthError] = useState(null)
+  // updateProfile mutates the Firebase user object in place, so setUser with
+  // the same reference won't re-render. Bumping this forces the context value
+  // to rebuild once a freshly set displayName is available.
+  const [profileNonce, setProfileNonce] = useState(0)
 
   useEffect(() => {
     if (!auth) {
@@ -51,6 +91,17 @@ export function AuthProvider({ children }) {
     }
 
     let mounted = true
+
+    // Completes a sign-in that fell back to redirect: the app reloads on the
+    // way back, so the credential arrives here rather than from the click.
+    getRedirectResult(auth)
+      .then((credential) => {
+        if (mounted && credential?.user) setUser(credential.user)
+      })
+      .catch((error) => {
+        if (mounted) setAuthError(getAuthErrorMessage(error))
+      })
+
     const unsubscribe = onAuthStateChanged(
       auth,
       (nextUser) => {
@@ -73,7 +124,57 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
+  /**
+   * Popups are unreliable on phones — in-app browsers (Instagram, LinkedIn)
+   * and some mobile Safari configurations block them outright. These codes all
+   * mean "the popup never became usable", which redirect can recover from.
+   */
+  const POPUP_UNAVAILABLE = new Set([
+    'auth/popup-blocked',
+    'auth/operation-not-supported-in-this-environment',
+    'auth/web-storage-unsupported',
+  ])
+
   const signInWithGoogle = async () => {
+    if (!auth) {
+      setAuthError(CONFIG_ERROR)
+      return
+    }
+
+    setAuthError(null)
+    setIsSigningIn(true)
+
+    const buildProvider = () => {
+      const provider = new GoogleAuthProvider()
+      provider.setCustomParameters({ prompt: 'select_account' })
+      return provider
+    }
+
+    try {
+      await setPersistence(auth, browserLocalPersistence)
+      const credential = await signInWithPopup(auth, buildProvider())
+      setUser(credential.user)
+      setIsSigningIn(false)
+    } catch (error) {
+      if (POPUP_UNAVAILABLE.has(error?.code)) {
+        try {
+          // Navigates away; the result is picked up on return by the
+          // getRedirectResult call in the mount effect.
+          await signInWithRedirect(auth, buildProvider())
+          return
+        } catch (redirectError) {
+          setAuthError(getAuthErrorMessage(redirectError))
+          setIsSigningIn(false)
+          return
+        }
+      }
+
+      setAuthError(getAuthErrorMessage(error))
+      setIsSigningIn(false)
+    }
+  }
+
+  const signUpWithEmail = async ({ name, email, password }) => {
     if (!auth) {
       setAuthError(CONFIG_ERROR)
       return
@@ -84,14 +185,53 @@ export function AuthProvider({ children }) {
 
     try {
       await setPersistence(auth, browserLocalPersistence)
-      const provider = new GoogleAuthProvider()
-      provider.setCustomParameters({ prompt: 'select_account' })
-      const credential = await signInWithPopup(auth, provider)
+      const credential = await createUserWithEmailAndPassword(auth, email, password)
+      // Without this the account has no displayName, and both the Home
+      // greeting and the Profile header fall back to placeholder copy.
+      await updateProfile(credential.user, { displayName: name.trim() })
+      setUser(credential.user)
+      setProfileNonce((n) => n + 1)
+      setIsSigningIn(false)
+    } catch (error) {
+      setAuthError(getEmailAuthErrorMessage(error))
+      setIsSigningIn(false)
+      throw error
+    }
+  }
+
+  const signInWithEmail = async ({ email, password }) => {
+    if (!auth) {
+      setAuthError(CONFIG_ERROR)
+      return
+    }
+
+    setAuthError(null)
+    setIsSigningIn(true)
+
+    try {
+      await setPersistence(auth, browserLocalPersistence)
+      const credential = await signInWithEmailAndPassword(auth, email, password)
       setUser(credential.user)
       setIsSigningIn(false)
     } catch (error) {
-      setAuthError(getAuthErrorMessage(error))
+      setAuthError(getEmailAuthErrorMessage(error))
       setIsSigningIn(false)
+      throw error
+    }
+  }
+
+  const sendPasswordReset = async (email) => {
+    if (!auth) {
+      setAuthError(CONFIG_ERROR)
+      return
+    }
+
+    setAuthError(null)
+    try {
+      await sendPasswordResetEmail(auth, email)
+    } catch (error) {
+      setAuthError(getEmailAuthErrorMessage(error))
+      throw error
     }
   }
 
@@ -110,9 +250,22 @@ export function AuthProvider({ children }) {
     }
   }
 
+  const clearAuthError = () => setAuthError(null)
+
   const value = useMemo(
-    () => ({ user, isAuthLoading, isSigningIn, authError, signInWithGoogle, signOut }),
-    [user, isAuthLoading, isSigningIn, authError]
+    () => ({
+      user,
+      isAuthLoading,
+      isSigningIn,
+      authError,
+      signInWithGoogle,
+      signUpWithEmail,
+      signInWithEmail,
+      sendPasswordReset,
+      clearAuthError,
+      signOut,
+    }),
+    [user, isAuthLoading, isSigningIn, authError, profileNonce]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
@@ -124,4 +277,4 @@ export function useAuth() {
   return context
 }
 
-export { CONFIG_ERROR, getAuthErrorMessage }
+export { CONFIG_ERROR, getAuthErrorMessage, getEmailAuthErrorMessage }
