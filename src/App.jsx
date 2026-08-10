@@ -14,6 +14,7 @@ const Profile = lazy(() => import('./pages/Profile'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
 const SignIn = lazy(() => import('./pages/SignIn'))
 const Setup = lazy(() => import('./pages/Setup'))
+const Coach = lazy(() => import('./pages/Coach'))
 
 function AuthenticatedLayout() {
   return (
@@ -67,6 +68,7 @@ export function AppRoutes() {
           <Route path="/" element={<Home />} />
           <Route path="/details" element={<DetailedView />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/coach" element={<Coach />} />
         </Route>
         <Route path="*" element={<Navigate to={user ? '/' : '/onboarding'} replace />} />
       </Routes>

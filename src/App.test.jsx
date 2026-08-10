@@ -79,6 +79,12 @@ describe('authenticated routes', () => {
     expect(screen.queryByRole('navigation', { name: 'Primary' })).not.toBeInTheDocument()
   })
 
+  it('protects Pace Coach from signed-out users', async () => {
+    renderRoutes('/coach')
+
+    expect(await screen.findByRole('heading', { name: 'Track every expense' })).toBeInTheDocument()
+  })
+
   it('redirects an authenticated user away from onboarding', async () => {
     authState.user = { uid: 'u1', displayName: 'Asha Singh', email: 'asha@example.com' }
     renderRoutes('/onboarding')
@@ -93,6 +99,13 @@ describe('authenticated routes', () => {
     renderRoutes('/')
 
     expect(screen.getByText('Getting your account ready…')).toBeInTheDocument()
+  })
+
+  it('renders Pace Coach for a configured authenticated account', async () => {
+    authState.user = { uid: 'u1', displayName: 'Asha Singh' }
+    renderRoutes('/coach')
+
+    expect(await screen.findByRole('heading', { name: 'Your spending pace' })).toBeInTheDocument()
   })
 
   it('surfaces unpublished security rules rather than an empty app', () => {

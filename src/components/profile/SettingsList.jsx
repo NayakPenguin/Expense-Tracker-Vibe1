@@ -1,4 +1,4 @@
-import { Tag, ChevronRight } from 'lucide-react'
+import { Sparkles, Tag, ChevronRight } from 'lucide-react'
 import GroupedList from '../shared/GroupedList'
 import ListRow from '../shared/ListRow'
 import Ring from '../shared/Ring'
@@ -14,6 +14,7 @@ export default function SettingsList({
   onToggleTheme,
   onOpenCategories,
   onOpenBudget,
+  onOpenCoach,
 }) {
   return (
     <GroupedList className="settings-list">
@@ -31,6 +32,13 @@ export default function SettingsList({
         subtitle={formatCurrency(monthlyBudget)}
         trailing={<ChevronRight size={18} strokeWidth={2} aria-hidden="true" />}
         onClick={onOpenBudget}
+      />
+      <ListRow
+        leading={<Sparkles size={20} strokeWidth={2} aria-hidden="true" />}
+        title="Pace Coach"
+        subtitle="Weekly spending guidance"
+        trailing={<ChevronRight size={18} strokeWidth={2} aria-hidden="true" />}
+        onClick={onOpenCoach}
       />
       <ListRow
         title="Dark Mode"

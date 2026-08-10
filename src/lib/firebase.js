@@ -1,5 +1,10 @@
 import { initializeApp } from 'firebase/app'
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
+import {
+  getAnalytics,
+  isSupported as isAnalyticsSupported,
+  logEvent,
+} from 'firebase/analytics'
 import { getAuth } from 'firebase/auth'
 import {
   initializeFirestore,
@@ -14,6 +19,7 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 }
 
 const requiredConfig = ['apiKey', 'authDomain', 'projectId', 'appId']
@@ -25,6 +31,7 @@ export const missingFirebaseConfig = requiredConfig.filter(
 export let firebaseInitializationError = null
 export let auth = null
 export let db = null
+export let analyticsReady = Promise.resolve(null)
 
 const appCheckSiteKey = import.meta.env.VITE_FIREBASE_APPCHECK_SITE_KEY?.trim()
 
@@ -34,6 +41,16 @@ export let appCheckEnabled = false
 if (missingFirebaseConfig.length === 0) {
   try {
     const app = initializeApp(firebaseConfig)
+
+    if (
+      firebaseConfig.measurementId?.trim() &&
+      typeof window !== 'undefined' &&
+      import.meta.env.MODE !== 'test'
+    ) {
+      analyticsReady = isAnalyticsSupported()
+        .then((supported) => (supported ? getAnalytics(app) : null))
+        .catch(() => null)
+    }
 
     // App Check proves requests come from this app rather than someone
     // replaying the public config. It is opt-in via env var so local
@@ -62,4 +79,13 @@ if (missingFirebaseConfig.length === 0) {
   } catch (error) {
     firebaseInitializationError = error
   }
+}
+
+/** Privacy-safe product events only; callers must never include financial data. */
+export function trackAnalyticsEvent(name, parameters = {}) {
+  analyticsReady
+    .then((analytics) => {
+      if (analytics) logEvent(analytics, name, parameters)
+    })
+    .catch(() => {})
 }
