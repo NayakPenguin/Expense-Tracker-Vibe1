@@ -1,28 +1,53 @@
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
+import { HashRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import { ThemeProvider } from './context/ThemeContext'
 import { AppDataProvider } from './context/AppDataContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import BottomNav from './components/shared/BottomNav'
-import Home from './pages/Home'
-import DetailedView from './pages/DetailedView'
-import Profile from './pages/Profile'
+import AuthLoadingScreen from './components/auth/AuthLoadingScreen'
+
+const Home = lazy(() => import('./pages/Home'))
+const DetailedView = lazy(() => import('./pages/DetailedView'))
+const Profile = lazy(() => import('./pages/Profile'))
+const Onboarding = lazy(() => import('./pages/Onboarding'))
+
+function AuthenticatedLayout() {
+  return (
+    <div className="app-shell">
+      <div className="app-shell__content"><Outlet /></div>
+      <BottomNav />
+    </div>
+  )
+}
+
+export function AppRoutes() {
+  const { user, isAuthLoading } = useAuth()
+
+  if (isAuthLoading) return <AuthLoadingScreen />
+
+  return (
+    <Suspense fallback={<AuthLoadingScreen />}>
+      <Routes>
+        <Route path="/onboarding" element={user ? <Navigate to="/" replace /> : <Onboarding />} />
+        <Route element={user ? <AuthenticatedLayout /> : <Navigate to="/onboarding" replace />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/details" element={<DetailedView />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+        <Route path="*" element={<Navigate to={user ? '/' : '/onboarding'} replace />} />
+      </Routes>
+    </Suspense>
+  )
+}
 
 export default function App() {
   return (
     <ThemeProvider>
-      <AppDataProvider>
-        <HashRouter>
-          <div className="app-shell">
-            <div className="app-shell__content">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/details" element={<DetailedView />} />
-                <Route path="/profile" element={<Profile />} />
-              </Routes>
-            </div>
-            <BottomNav />
-          </div>
-        </HashRouter>
-      </AppDataProvider>
+      <AuthProvider>
+        <AppDataProvider>
+          <HashRouter><AppRoutes /></HashRouter>
+        </AppDataProvider>
+      </AuthProvider>
     </ThemeProvider>
   )
 }

@@ -1,0 +1,32 @@
+.auth-loading {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-4);
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.auth-loading__mark {
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--accent-primary-muted);
+  border-top-color: var(--accent-primary);
+  border-radius: var(--radius-full);
+  animation: auth-loading-spin 800ms linear infinite;
+}
+
+@keyframes auth-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-loading__mark {
+    animation: none;
+    border-top-color: var(--accent-primary-muted);
+  }
+}

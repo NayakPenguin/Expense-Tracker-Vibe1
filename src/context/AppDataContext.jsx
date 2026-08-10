@@ -2,7 +2,6 @@ import { createContext, useContext, useState } from 'react'
 import categoriesFixture from '../mock/categories.json'
 import transactionsFixture from '../mock/transactions.json'
 import budgetFixture from '../mock/budget.json'
-import userFixture from '../mock/user.json'
 
 const AppDataContext = createContext(null)
 
@@ -13,7 +12,6 @@ export function AppDataProvider({ children }) {
   const [categories, setCategories] = useState(categoriesFixture)
   const [transactions, setTransactions] = useState(transactionsFixture)
   const [budget, setBudget] = useState(budgetFixture)
-  const [user, setUser] = useState(userFixture)
 
   const addTransaction = (transaction) => {
     const newTransaction = {
@@ -51,24 +49,18 @@ export function AppDataProvider({ children }) {
     setBudget((prev) => ({ ...prev, incomeHidden: !prev.incomeHidden }))
   }
 
-  const updateUserName = (name) => {
-    setUser((prev) => ({ ...prev, name }))
-  }
-
   return (
     <AppDataContext.Provider
       value={{
         categories,
         transactions,
         budget,
-        user,
         addTransaction,
         addCategory,
         updateCategory,
         deleteCategory,
         updateBudget,
         toggleIncomeHidden,
-        updateUserName,
       }}
     >
       {children}

@@ -5,14 +5,28 @@ import CategoryManagerSheet from '../components/profile/CategoryManagerSheet'
 import BudgetEditorSheet from '../components/profile/BudgetEditorSheet'
 import { useAppData } from '../context/AppDataContext'
 import { useTheme } from '../context/ThemeContext'
+import { useAuth } from '../context/AuthContext'
 import './Profile.css'
 
 export default function Profile() {
   const { categories, transactions, budget } = useAppData()
   const { theme, toggleTheme } = useTheme()
+  const { authError, signOut } = useAuth()
 
   const [categoryManagerOpen, setCategoryManagerOpen] = useState(false)
   const [budgetEditorOpen, setBudgetEditorOpen] = useState(false)
+  const [isSigningOut, setIsSigningOut] = useState(false)
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true)
+    try {
+      await signOut()
+    } catch {
+      // AuthContext exposes the user-facing error next to the action.
+    } finally {
+      setIsSigningOut(false)
+    }
+  }
 
   const budgetPercent = useMemo(() => {
     const now = new Date()
@@ -42,6 +56,16 @@ export default function Profile() {
         onOpenCategories={() => setCategoryManagerOpen(true)}
         onOpenBudget={() => setBudgetEditorOpen(true)}
       />
+
+      {authError ? <p className="profile-page__auth-error" role="alert">{authError}</p> : null}
+      <button
+        type="button"
+        className="profile-page__sign-out"
+        onClick={handleSignOut}
+        disabled={isSigningOut}
+      >
+        {isSigningOut ? 'Signing out…' : 'Sign out'}
+      </button>
 
       <CategoryManagerSheet
         open={categoryManagerOpen}

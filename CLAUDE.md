@@ -1,4 +1,6 @@
-# Expense Tracker — Project Context (Phase 1: UI Only)
+# Expense Tracker — Project Context (Phase 1 UI + Phase 2 Auth Slice)
+
+> **Current override (Phase 2 auth slice):** Firebase Google Authentication and a three-step onboarding flow are now implemented. Authentication is required for the three app routes. Google supplies the read-only profile identity, and Profile includes sign-out. Transactions, categories, budgets, and theme settings remain fixture-backed client state and are not persisted. This override supersedes older “no auth” statements below; all other Phase 1 design rules remain active.
 
 This file is the persistent context for AI coding assistants (Claude Code or similar) working on this repo. Read this fully before writing any code. Keep it updated as the project evolves — Phase 2 (backend/auth/data) and Phase 3 (collaborative features) will be appended later; **do not build toward them yet.**
 
@@ -29,6 +31,8 @@ A reference screenshot of an existing app was used for structural inspiration on
 
 - **React** with **Vite**
 - **React Router** for the three top-level routes (Home, Detailed View, Profile)
+- **Firebase Authentication** with Google as the only sign-in provider; no Firestore or other Firebase products yet
+- **Vitest + React Testing Library** for authentication, routing, and onboarding coverage
 - **Plain CSS + CSS custom properties** — no Tailwind, no CSS-in-JS. Import `colors.css` (or `theme.css`) globally and use `var(--token-name)` everywhere. See §5.
 - **Recharts** (or a comparably lightweight React chart lib) for the donut charts
 - **Mobile-first** layout: design for a ~390px phone viewport first, then let it scale up. On wide/desktop viewports, don't stretch the UI edge to edge — center it as a constrained column (max-width ~480px) with the base background filling the rest of the page, the way Cash App or Mercury's web apps do. This app is headed toward a native shell later, so it should always read as "phone app," never as a generic responsive dashboard.
