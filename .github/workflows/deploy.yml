@@ -56,8 +56,17 @@ jobs:
       # A bundle missing its Firebase config builds and tests clean, then fails
       # for every user at runtime. Catch that here rather than in production.
       - name: Verify Firebase config was inlined
+        env:
+          PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
         run: |
-          if ! grep -rq "${{ secrets.VITE_FIREBASE_PROJECT_ID }}" dist/assets/*.js; then
+          # Checked separately: an unset secret expands to an empty string, and
+          # grep for an empty pattern matches every file, so the check below
+          # would pass vacuously on exactly the misconfiguration it exists for.
+          if [ -z "$PROJECT_ID" ]; then
+            echo "::error::VITE_FIREBASE_PROJECT_ID is not set. Add the VITE_* repository secrets."
+            exit 1
+          fi
+          if ! grep -rq "$PROJECT_ID" dist/assets/*.js; then
             echo "::error::Firebase project id is missing from the bundle — check the VITE_* repository secrets."
             exit 1
           fi
