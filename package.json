@@ -11,7 +11,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "deploy": "npm run build && npx --yes firebase-tools deploy --only hosting",
+    "deploy:rules": "npx --yes firebase-tools deploy --only firestore:rules"
   },
   "dependencies": {
     "firebase": "^12.17.1",

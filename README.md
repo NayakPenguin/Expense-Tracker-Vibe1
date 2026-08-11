@@ -31,6 +31,33 @@ Do not commit `.env.local`. Vite exposes `VITE_*` values to the browser, so they
 - `npm run test:watch` — run tests in watch mode
 - `npm run build` — create the production bundle
 - `npm run preview` — serve the production bundle locally
+- `npm run deploy` — build, then deploy to Firebase Hosting
+- `npm run deploy:rules` — deploy `firestore.rules` only
+
+## Deploying
+
+Hosted on Firebase Hosting, configured in `firebase.json`; `.firebaserc` pins the project to `expense-tracker-94232`.
+
+One-time, on each machine that deploys:
+
+```bash
+npx --yes firebase-tools login
+```
+
+Then, from a clean tree:
+
+```bash
+npm test && npm run deploy
+```
+
+That builds into `dist/` and uploads it. The app is served at `https://expense-tracker-94232.web.app`, which is already in Firebase's authorized-domains list, so Google and email sign-in work without extra setup.
+
+Two things to know about the build:
+
+- **`VITE_*` values are baked in at build time**, read from `.env.local`. Deploying from a machine without a populated `.env.local` produces a bundle that cannot reach Firebase. There is no runtime configuration.
+- **`index.html` is served with `no-cache` while `/assets/**` is cached for a year.** The asset filenames are content-hashed, so this is safe — and it is what lets a redeploy reach users immediately instead of leaving them on a stale `index.html` that points at deleted chunks. The app's error boundary handles that case for tabs that are already open.
+
+Rollback is available from the Firebase Console under **Hosting → Release history**, which keeps previous releases and can restore one in a click.
 
 ## Data model
 
