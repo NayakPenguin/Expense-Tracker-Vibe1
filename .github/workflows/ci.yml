@@ -1,9 +1,10 @@
 name: CI
 
+# Pull requests only. Pushes to main are covered by the deploy workflow, which
+# runs the same checks and gates the release on them — running both would just
+# duplicate the work.
 on:
   pull_request:
-  push:
-    branches: [main]
 
 permissions:
   contents: read

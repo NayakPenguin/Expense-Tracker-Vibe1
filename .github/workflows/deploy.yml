@@ -1,0 +1,93 @@
+name: Deploy to Firebase Hosting
+
+on:
+  push:
+    branches: [main]
+  # Lets you re-run a deploy from the Actions tab without pushing a commit,
+  # which is the quickest way back to a good state if something ships broken.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never let two deploys race. A queued run waits rather than cancelling, so a
+# deploy that is already uploading is allowed to finish cleanly.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  # The failsafe. Nothing reaches production unless this job is green, and the
+  # bundle it produces is the exact one that gets deployed — the deploy job
+  # never rebuilds, so it cannot ship something that was not verified.
+  verify:
+    name: Test and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build production bundle
+        env:
+          # Vite inlines these at build time. They are public by design — they
+          # ship inside the bundle either way — but they live in repository
+          # secrets so they are not committed.
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APPCHECK_SITE_KEY: ${{ secrets.VITE_FIREBASE_APPCHECK_SITE_KEY }}
+        run: npm run build
+
+      # A bundle missing its Firebase config builds and tests clean, then fails
+      # for every user at runtime. Catch that here rather than in production.
+      - name: Verify Firebase config was inlined
+        run: |
+          if ! grep -rq "${{ secrets.VITE_FIREBASE_PROJECT_ID }}" dist/assets/*.js; then
+            echo "::error::Firebase project id is missing from the bundle — check the VITE_* repository secrets."
+            exit 1
+          fi
+          echo "Firebase config present in bundle."
+
+      - name: Upload verified bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
+
+  deploy:
+    name: Deploy to production
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download verified bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_EXPENSE_TRACKER_94232 }}
+          projectId: expense-tracker-94232
+          channelId: live

@@ -59,6 +59,32 @@ Two things to know about the build:
 
 Rollback is available from the Firebase Console under **Hosting → Release history**, which keeps previous releases and can restore one in a click.
 
+### Automatic deploys
+
+`.github/workflows/deploy.yml` deploys every push to `main`. It runs as two jobs:
+
+1. **Test and build** — runs the suite, builds the bundle, and asserts the Firebase config was actually inlined. Uploads the result as an artifact.
+2. **Deploy** — downloads *that same artifact* and ships it.
+
+The second job `needs` the first, so a failing test blocks the release. Because the deploy never rebuilds, it cannot ship anything that was not verified. Concurrent runs queue rather than cancel, so a deploy mid-upload always finishes.
+
+`workflow_dispatch` is enabled, so a deploy can be re-run from the Actions tab without pushing a commit.
+
+Required repository secrets (**Settings → Secrets and variables → Actions**):
+
+| Secret | Source |
+|---|---|
+| `FIREBASE_SERVICE_ACCOUNT_EXPENSE_TRACKER_94232` | created by `firebase init hosting:github` |
+| `VITE_FIREBASE_API_KEY` | same values as `.env.local` |
+| `VITE_FIREBASE_AUTH_DOMAIN` | " |
+| `VITE_FIREBASE_PROJECT_ID` | " |
+| `VITE_FIREBASE_APP_ID` | " |
+| `VITE_FIREBASE_STORAGE_BUCKET` | " |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | " |
+| `VITE_FIREBASE_APPCHECK_SITE_KEY` | optional, only once App Check is enabled |
+
+The `VITE_*` values are not truly secret — they ship inside the bundle — but keeping them in secrets avoids committing them.
+
 ## Data model
 
 Everything a user owns is nested under one document, which is what makes the security rules a single ownership check:
