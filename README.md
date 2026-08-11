@@ -59,31 +59,19 @@ Two things to know about the build:
 
 Rollback is available from the Firebase Console under **Hosting → Release history**, which keeps previous releases and can restore one in a click.
 
-### Automatic deploys
+### Deploys are manual
 
-`.github/workflows/deploy.yml` deploys every push to `main`. It runs as two jobs:
+Deploying is a local `npm run deploy` from a machine with a populated `.env.local`. There is no automatic deploy on push.
 
-1. **Test and build** — runs the suite, builds the bundle, and asserts the Firebase config was actually inlined. Uploads the result as an artifact.
-2. **Deploy** — downloads *that same artifact* and ships it.
+A GitHub Actions pipeline was tried and removed: publishing from Actions needs repository secrets (a Firebase service account key plus the `VITE_*` build values), and adding those requires **admin** permission on the repository. Anyone with only collaborator access cannot set them up, so the workflow could never authenticate and failed on every push.
 
-The second job `needs` the first, so a failing test blocks the release. Because the deploy never rebuilds, it cannot ship anything that was not verified. Concurrent runs queue rather than cancel, so a deploy mid-upload always finishes.
+If the repository owner wants automatic deploys later, the pieces needed are:
 
-`workflow_dispatch` is enabled, so a deploy can be re-run from the Actions tab without pushing a commit.
+- a service account with the Firebase Hosting Admin role, and a JSON key stored as a repository secret
+- the six `VITE_FIREBASE_*` values as repository secrets, since Vite inlines them at build time
+- a workflow that runs `npm test` and `npm run build` first, and deploys only the artifact it just verified
 
-Required repository secrets (**Settings → Secrets and variables → Actions**):
-
-| Secret | Source |
-|---|---|
-| `FIREBASE_SERVICE_ACCOUNT_EXPENSE_TRACKER_94232` | created by `firebase init hosting:github` |
-| `VITE_FIREBASE_API_KEY` | same values as `.env.local` |
-| `VITE_FIREBASE_AUTH_DOMAIN` | " |
-| `VITE_FIREBASE_PROJECT_ID` | " |
-| `VITE_FIREBASE_APP_ID` | " |
-| `VITE_FIREBASE_STORAGE_BUCKET` | " |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | " |
-| `VITE_FIREBASE_APPCHECK_SITE_KEY` | optional, only once App Check is enabled |
-
-The `VITE_*` values are not truly secret — they ship inside the bundle — but keeping them in secrets avoids committing them.
+`.github/workflows/ci.yml` still runs tests and a build on every pull request and on pushes to `main`; it just does not deploy.
 
 ## Data model
 
