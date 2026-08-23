@@ -1,0 +1,218 @@
+.coach-page {
+  padding-bottom: var(--space-5);
+}
+
+.coach-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+.coach-header__back {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  cursor: pointer;
+}
+
+.coach-header__eyebrow,
+.coach-section__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--accent-primary);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.coach-header__title {
+  margin-top: 3px;
+  font-family: var(--font-display);
+  font-size: 23px;
+}
+
+.coach-hero,
+.coach-section,
+.coach-recommendation {
+  margin: 0 var(--space-5) var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+
+.coach-hero {
+  background: linear-gradient(145deg, var(--accent-primary-muted), var(--bg-card) 62%);
+}
+
+.coach-hero--over-pace,
+.coach-hero--close,
+.coach-hero--exceeded {
+  background: linear-gradient(145deg, var(--accent-warning-muted), var(--bg-card) 62%);
+}
+
+.coach-hero__status {
+  display: inline-flex;
+  padding: 5px 9px;
+  border-radius: var(--radius-full);
+  background: var(--accent-positive-muted);
+  color: var(--accent-positive);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.coach-hero--over-pace .coach-hero__status,
+.coach-hero--close .coach-hero__status,
+.coach-hero--exceeded .coach-hero__status {
+  background: var(--accent-warning-muted);
+  color: var(--accent-warning);
+}
+
+.coach-hero__label {
+  margin-top: var(--space-5);
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.coach-hero__amount {
+  margin-top: 5px;
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.coach-hero__body,
+.coach-section__note,
+.coach-recommendation p {
+  margin-top: var(--space-3);
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.coach-hero__grid,
+.coach-weekly-amounts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.coach-hero__grid div,
+.coach-weekly-amounts div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.coach-hero__grid span,
+.coach-weekly-amounts span {
+  color: var(--text-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.coach-hero__grid strong,
+.coach-weekly-amounts strong {
+  font-size: 14px;
+}
+
+.coach-section h2,
+.coach-recommendation h2 {
+  margin-top: 5px;
+  font-family: var(--font-display);
+  font-size: 19px;
+}
+
+.coach-section__heading-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.coach-week-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.coach-week-change--down {
+  color: var(--accent-positive);
+  background: var(--accent-positive-muted);
+}
+
+.coach-week-change--up {
+  color: var(--accent-warning);
+  background: var(--accent-warning-muted);
+}
+
+.coach-week-change--steady {
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+}
+
+.coach-weekly-amounts {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.coach-weekly-amounts strong {
+  font-size: 20px;
+}
+
+.coach-progress {
+  overflow: hidden;
+  height: 10px;
+  margin-top: var(--space-4);
+  border-radius: var(--radius-full);
+  background: var(--border-subtle);
+}
+
+.coach-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent-primary);
+}
+
+.coach-recommendation {
+  border-color: transparent;
+  background: var(--accent-primary-muted);
+}
+
+.coach-recommendation button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.coach-header__back:focus-visible,
+.coach-recommendation button:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}

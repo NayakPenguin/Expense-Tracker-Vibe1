@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import ProfileHeader from '../components/profile/ProfileHeader'
 import SettingsList from '../components/profile/SettingsList'
 import CategoryManagerSheet from '../components/profile/CategoryManagerSheet'
@@ -9,6 +10,7 @@ import { useAuth } from '../context/AuthContext'
 import './Profile.css'
 
 export default function Profile() {
+  const navigate = useNavigate()
   const { categories, transactions, budget } = useAppData()
   const { theme, toggleTheme } = useTheme()
   const { authError, signOut } = useAuth()
@@ -55,6 +57,7 @@ export default function Profile() {
         onToggleTheme={toggleTheme}
         onOpenCategories={() => setCategoryManagerOpen(true)}
         onOpenBudget={() => setBudgetEditorOpen(true)}
+        onOpenCoach={() => navigate('/coach')}
       />
 
       {authError ? <p className="profile-page__auth-error" role="alert">{authError}</p> : null}

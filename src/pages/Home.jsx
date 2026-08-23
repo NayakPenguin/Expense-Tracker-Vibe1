@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import HomeHeader from '../components/home/HomeHeader'
 import SpendingRingCard from '../components/home/SpendingRingCard'
 import QuickActionsRow from '../components/home/QuickActionsRow'
@@ -6,11 +7,15 @@ import AddExpenseSheet from '../components/home/AddExpenseSheet'
 import RecentTransactionsList from '../components/home/RecentTransactionsList'
 import CategoryManagerSheet from '../components/profile/CategoryManagerSheet'
 import BudgetEditorSheet from '../components/profile/BudgetEditorSheet'
+import PaceCoachCard from '../components/home/PaceCoachCard'
 import { useAppData } from '../context/AppDataContext'
 import { useAuth } from '../context/AuthContext'
 import { getMonthLabel } from '../utils/format'
+import { getPaceCoachInsights } from '../utils/paceCoach'
 
 export default function Home() {
+  const navigate = useNavigate()
+  const location = useLocation()
   const { transactions, categories, budget } = useAppData()
   const { user } = useAuth()
 
@@ -18,6 +23,13 @@ export default function Home() {
   const [editingTransaction, setEditingTransaction] = useState(null)
   const [categoryManagerOpen, setCategoryManagerOpen] = useState(false)
   const [budgetEditorOpen, setBudgetEditorOpen] = useState(false)
+
+  useEffect(() => {
+    const action = location.state?.coachAction
+    if (action === 'add') setAddExpenseOpen(true)
+    if (action === 'budget') setBudgetEditorOpen(true)
+    if (action) navigate('/', { replace: true, state: null })
+  }, [location.state, navigate])
 
   const now = new Date()
 
@@ -42,6 +54,16 @@ export default function Home() {
 
   const percent = budget.monthlyBudget > 0 ? (spentThisMonth / budget.monthlyBudget) * 100 : 0
 
+  const coachInsights = useMemo(
+    () => getPaceCoachInsights({
+      transactions,
+      categories,
+      monthlyBudget: budget.monthlyBudget,
+      now,
+    }),
+    [transactions, categories, budget.monthlyBudget]
+  )
+
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
   const daysLeft = Math.max(1, daysInMonth - now.getDate() + 1)
   const pacePercent = (now.getDate() / daysInMonth) * 100
@@ -59,6 +81,8 @@ export default function Home() {
         daysLeft={daysLeft}
         onOpenBudget={() => setBudgetEditorOpen(true)}
       />
+
+      <PaceCoachCard insights={coachInsights} onOpen={() => navigate('/coach')} />
 
       <QuickActionsRow
         onAdd={() => setAddExpenseOpen(true)}

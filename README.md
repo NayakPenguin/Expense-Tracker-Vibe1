@@ -20,7 +20,7 @@ VITE_FIREBASE_PROJECT_ID
 VITE_FIREBASE_APP_ID
 ```
 
-`VITE_FIREBASE_STORAGE_BUCKET` and `VITE_FIREBASE_MESSAGING_SENDER_ID` are included for parity with the Firebase web configuration but are not used by the current auth-only integration.
+`VITE_FIREBASE_STORAGE_BUCKET` and `VITE_FIREBASE_MESSAGING_SENDER_ID` are included for parity with the Firebase web configuration. `VITE_FIREBASE_MEASUREMENT_ID` is optional; when set in a supported browser, it enables privacy-safe product analytics such as Pace Coach views and actions. No merchant names, transaction amounts, or other financial details are sent with those events.
 
 Do not commit `.env.local`. Vite exposes `VITE_*` values to the browser, so they must never contain server secrets.
 
@@ -109,6 +109,12 @@ The client code is already wired and activates as soon as a site key exists — 
 4. Run the app locally once — the console logs a debug token. Register it under **App Check → Apps → ⋮ → Manage debug tokens**, or local development will fail attestation.
 5. Only then set **App Check → APIs → Cloud Firestore → Enforce**. Enforcing before steps 1–4 will lock the app out of its own database.
 
-### First run
+## Pace Coach
+
+Pace Coach turns the account's existing budget and expense history into an actionable weekly check-in. The Home card shows today's safe-to-spend amount and the projected month-end spend; the protected `/coach` page adds week-over-week movement, the leading category, budget checkpoints, and a direct next action.
+
+All guidance is calculated locally from data already loaded into the signed-in session. Pace Coach does not create a new Firestore collection or send financial values to Analytics. Guidance is informational and updates automatically as expenses or the monthly budget change.
+
+## First run
 
 A new account is seeded with the eight default categories and `hasCompletedSetup: false`, which routes it to `/setup` — a two-step flow for setting the monthly budget and customizing categories. Home is unreachable until that completes.

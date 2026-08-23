@@ -1,0 +1,131 @@
+.pace-coach-card {
+  position: relative;
+  overflow: hidden;
+  margin: var(--space-5);
+  padding: var(--space-5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+}
+
+.pace-coach-card::after {
+  content: '';
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  right: -90px;
+  top: -105px;
+  border-radius: 50%;
+  background: var(--accent-primary-muted);
+  pointer-events: none;
+}
+
+.pace-coach-card--over-pace::after,
+.pace-coach-card--close::after,
+.pace-coach-card--exceeded::after {
+  background: var(--accent-warning-muted);
+}
+
+.pace-coach-card__eyebrow {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pace-coach-card__icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  background: var(--accent-primary-muted);
+  color: var(--accent-primary);
+}
+
+.pace-coach-card__status {
+  margin-left: auto;
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+  background: var(--accent-positive-muted);
+  color: var(--accent-positive);
+  font-size: 10px;
+}
+
+.pace-coach-card--over-pace .pace-coach-card__status,
+.pace-coach-card--close .pace-coach-card__status,
+.pace-coach-card--exceeded .pace-coach-card__status {
+  background: var(--accent-warning-muted);
+  color: var(--accent-warning);
+}
+
+.pace-coach-card__content {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.pace-coach-card__label,
+.pace-coach-card__projection span {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.pace-coach-card__amount {
+  margin-top: 4px;
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.pace-coach-card__projection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.pace-coach-card__projection strong {
+  color: var(--text-primary);
+  font-size: 15px;
+}
+
+.pace-coach-card__message {
+  margin-top: var(--space-4);
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.pace-coach-card__action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--accent-primary-muted);
+  color: var(--accent-primary);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pace-coach-card__action:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
