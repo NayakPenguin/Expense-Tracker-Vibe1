@@ -1,14 +1,14 @@
 .spending-ring-card {
   position: relative;
   overflow: hidden;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(124px, 37vw, 146px);
   align-items: center;
-  gap: var(--space-5);
   margin: 0 var(--space-5);
-  padding: var(--space-5);
-  background: var(--bg-card);
+  padding: 30px 22px 20px;
+  background: var(--surface-hero);
   border: 1px solid transparent;
-  border-radius: var(--radius-lg);
+  border-radius: 24px;
   box-shadow: var(--shadow-card);
 }
 
@@ -17,108 +17,192 @@
 }
 
 /* Ambient coral wash — asymmetric, top-left — the card's warmth accent. */
-.spending-ring-card::before {
-  content: '';
-  position: absolute;
-  top: -30%;
-  left: -20%;
-  width: 75%;
-  height: 160%;
-  background: var(--ring-ambient-coral);
-  pointer-events: none;
-}
-
 .spending-ring-card__ring-wrap {
   position: relative;
   flex-shrink: 0;
+  grid-column: 2;
+  grid-row: 1;
 }
 
-.spending-ring-card__ring-label {
-  font-size: 11px;
+.spending-ring-card__summary {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding-left: 26px;
+}
+
+.spending-ring-card__eyebrow {
   color: var(--text-secondary);
+  font-size: 15px;
   font-weight: 500;
 }
 
-.spending-ring-card__ring-amount {
-  font-family: var(--font-display);
-  font-size: 30px;
-  font-weight: 700;
+.spending-ring-card__amount {
   color: var(--text-primary);
-  letter-spacing: -0.02em;
+  font-family: var(--font-body);
+  font-size: clamp(31px, 8vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.055em;
   line-height: 1;
-  margin-top: 6px;
 }
 
-.spending-ring-card__ring-percent {
-  font-size: 12px;
-  color: var(--accent-primary);
+.spending-ring-card__percent {
+  color: var(--color-violet);
+  font-size: 16px;
   font-weight: 600;
-  margin-top: 6px;
+}
+
+.spending-ring-card__wallet-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 24px;
+  background: var(--surface-lilac);
+  color: var(--color-violet);
 }
 
 .spending-ring-card__stats {
-  position: relative;
-  flex: 1;
-  min-width: 0;
+  grid-column: 1 / -1;
+  grid-row: 2;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--space-4);
-}
-
-.spending-ring-card__divider {
-  width: 100%;
-  height: 1px;
-  background: var(--border-subtle);
+  gap: 12px;
+  margin-top: 28px;
 }
 
 .spending-ring-card__stat {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-  width: 100%;
-  background: none;
-  border: none;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--surface-lilac);
+  text-align: left;
+}
+
+button.spending-ring-card__stat {
   cursor: pointer;
-  padding: 0;
-  text-align: right;
 }
 
-.spending-ring-card__stat-label {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+button.spending-ring-card__stat:active {
+  transform: scale(0.98);
 }
 
-.spending-ring-card__stat-value {
-  font-size: 20px;
-  color: var(--text-primary);
-  font-weight: 700;
+.spending-ring-card__stat:last-child {
+  background: var(--surface-green);
 }
 
-.spending-ring-card__stat-value--coral {
-  color: var(--color-coral);
+.spending-ring-card__stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  border-radius: 17px;
 }
 
-.spending-ring-card__pace-pill {
-  margin-top: 2px;
-  padding: 3px var(--space-2);
-  border-radius: var(--radius-full);
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+.spending-ring-card__stat-icon--budget {
+  background: var(--surface-icon);
+  color: var(--color-violet);
 }
 
-.spending-ring-card__pace-pill--good {
-  background: var(--accent-positive-muted);
+.spending-ring-card__stat-icon--days {
+  background: var(--surface-icon);
   color: var(--color-emerald);
 }
 
+.spending-ring-card__stat-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.spending-ring-card__stat-label {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.spending-ring-card__stat-value {
+  color: var(--text-primary);
+  font-size: 22px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 390px) {
+  .spending-ring-card {
+    padding-inline: 14px;
+  }
+
+  .spending-ring-card__summary {
+    padding-left: 8px;
+  }
+
+  .spending-ring-card__stat {
+    gap: 8px;
+    padding-inline: 10px;
+  }
+
+  .spending-ring-card__stat-icon {
+    flex-basis: 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+  }
+
+  .spending-ring-card__stat-value {
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 350px) {
+  .spending-ring-card {
+    grid-template-columns: minmax(0, 1fr) 122px;
+    padding-top: 24px;
+  }
+
+  .spending-ring-card__ring-wrap {
+    transform: scale(0.84);
+    transform-origin: right center;
+    margin-right: -12px;
+  }
+
+  .spending-ring-card__eyebrow {
+    font-size: 13px;
+  }
+
+  .spending-ring-card__amount {
+    font-size: 29px;
+  }
+
+  .spending-ring-card__percent {
+    font-size: 14px;
+  }
+}
+
+/* Keep the old pace-state selectors harmless for other callers that still
+   pass pace data while Home uses the simpler reference layout. */
+.spending-ring-card__pace-pill,
+.spending-ring-card__pace-pill--good,
 .spending-ring-card__pace-pill--over {
-  background: var(--accent-warning-muted);
-  color: var(--color-amber);
+  display: none;
+}
+
+.spending-ring-card__stat-value--coral {
+  color: var(--text-primary);
+}
+
+.spending-ring-card button {
+  border: none;
 }

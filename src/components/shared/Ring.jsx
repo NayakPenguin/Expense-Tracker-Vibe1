@@ -15,6 +15,7 @@ export default function Ring({
   strokeWidth = 14,
   children,
   trackColor = 'var(--accent-primary-muted)',
+  fillColor = 'var(--color-indigo)',
 }) {
   const clamped = Math.min(100, Math.max(0, percent))
   const radius = (size - strokeWidth) / 2
@@ -58,7 +59,7 @@ export default function Ring({
           cy={cy}
           r={radius}
           fill="none"
-          stroke="var(--color-indigo)"
+          stroke={fillColor}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           transform={`rotate(-90 ${cx} ${cy})`}

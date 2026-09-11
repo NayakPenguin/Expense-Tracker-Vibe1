@@ -1,8 +1,17 @@
+.quick-actions__title {
+  padding: 0 var(--space-5) 16px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
 .quick-actions-row {
   display: flex;
   gap: var(--space-3);
-  padding: 0 var(--space-5) var(--space-5);
-  margin-top: var(--space-5);
+  padding: 0 var(--space-5) 32px;
+  margin-top: 0;
 }
 
 .quick-actions-row__button {
@@ -11,18 +20,20 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  border-radius: var(--radius-md);
-  border: 1px solid transparent;
+  gap: 13px;
+  min-height: 134px;
+  padding: 14px 8px;
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
   background: var(--bg-card);
   box-shadow: var(--shadow-card);
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
+  line-height: 1.2;
   text-align: center;
   cursor: pointer;
-  transition: transform 0.1s ease, opacity 0.1s ease;
+  transition: transform 0.1s ease, opacity 0.1s ease, box-shadow 0.1s ease;
 }
 
 [data-theme='light'] .quick-actions-row__button {
@@ -34,6 +45,53 @@
   opacity: 0.9;
 }
 
-.quick-actions-row__button svg {
-  color: var(--accent-primary);
+.quick-actions-row__button:focus-visible,
+.home-header__notifications:focus-visible,
+.recent-transactions__view-all:focus-visible,
+.recent-transactions__show-more:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.quick-actions-row__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius-full);
+  color: var(--text-on-accent);
+}
+
+.quick-actions-row__icon--add {
+  background: var(--color-violet);
+}
+
+.quick-actions-row__icon--budget {
+  background: var(--color-sky);
+}
+
+.quick-actions-row__icon--categories {
+  background: var(--color-emerald);
+}
+
+@media (max-width: 390px) {
+  .quick-actions__title {
+    padding-inline: 16px;
+  }
+
+  .quick-actions-row {
+    gap: 8px;
+    padding-inline: 16px;
+  }
+
+  .quick-actions-row__button {
+    min-height: 124px;
+    font-size: 12px;
+  }
+
+  .quick-actions-row__icon {
+    width: 52px;
+    height: 52px;
+  }
 }

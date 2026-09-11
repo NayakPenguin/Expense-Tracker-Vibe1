@@ -4,7 +4,7 @@ import './BottomNav.css'
 
 const TABS = [
   { to: '/', label: 'Home', Icon: House, end: true },
-  { to: '/details', label: 'Details', Icon: ChartPie, end: false },
+  { to: '/details', label: 'Reports', Icon: ChartPie, end: false },
   { to: '/profile', label: 'Profile', Icon: User, end: false },
 ]
 

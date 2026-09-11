@@ -6,8 +6,9 @@
   If a color you need doesn't exist here, add it here first, then reference it
   with var(--token-name).
 
-  Theme switching: default (no attribute) = dark mode. Set data-theme="light"
-  on <html> or <body> to switch to light mode. See ThemeContext in CLAUDE.md §5.
+  Theme switching: dark tokens remain the no-attribute fallback for compatibility,
+  while the app boots into light mode unless a user opts into dark mode. See
+  ThemeContext in CLAUDE.md §5.
 */
 
 :root {
@@ -17,6 +18,8 @@
   --color-slate-mist: #9497A6;/* secondary text, muted UI, icons */
   --color-paper: #F5F5F7;     /* primary text on dark */
   --color-indigo: #5271FF;    /* primary brand accent — spent-so-far ring arc, primary actions */
+  --color-violet: #6F2BD9;    /* Home visual accent — links, ring, selected navigation */
+  --color-sky: #25A9EA;       /* Home quick action accent */
   --color-coral: #FF6B4A;     /* secondary accent — "Days left" numeral, ring's ambient warmth */
   --color-amber: #FFB648;     /* overpace warning — ring arc once you've passed the pace marker */
   --color-yellow: #F2C94C;    /* pace-marker tick on the ring (ideal even-spend point) */
@@ -27,6 +30,16 @@
   --bg-card: var(--color-charcoal);
   --bg-elevated: #1E1E27;
   --bg-sheet: #1B1B24;         /* bottom sheets / modals */
+
+  --surface-hero: #F8F6FF;
+  --surface-lilac: #F2EDFF;
+  --surface-green: #F1FBF4;
+  --surface-pink: #FFF0F5;
+  --surface-orange: #FFF5E8;
+  --surface-teal: #ECFAF3;
+  --ring-track: #EDECF2;
+  --surface-icon: rgba(255, 255, 255, 0.12);
+  --shadow-nav: 0 -3px 14px rgba(30, 40, 68, 0.04);
 
   --text-primary: var(--color-paper);
   --text-secondary: var(--color-slate-mist);
@@ -109,6 +122,16 @@
   --bg-elevated: #FFFFFF;
   --bg-sheet: #FFFFFF;
 
+  --surface-hero: #FBF9FF;
+  --surface-lilac: #F3EEFF;
+  --surface-green: #F1FBF4;
+  --surface-pink: #FFF0F5;
+  --surface-orange: #FFF5E8;
+  --surface-teal: #ECFAF3;
+  --ring-track: #E9E8ED;
+  --surface-icon: rgba(255, 255, 255, 0.48);
+  --shadow-nav: 0 -3px 14px rgba(30, 40, 68, 0.04);
+
   --text-primary: #12121A;
   --text-secondary: #6B6E7D;
   --text-muted: #9497A6;
@@ -122,7 +145,7 @@
   --accent-warning-muted: rgba(255, 182, 72, 0.12);
   --accent-positive-muted: rgba(47, 191, 135, 0.12);
 
-  --shadow-card: 0 8px 24px rgba(18, 18, 26, 0.08);
+  --shadow-card: 0 5px 18px rgba(30, 40, 68, 0.09);
   --shadow-sheet: 0 -8px 32px rgba(18, 18, 26, 0.12);
 
   --ring-glow-indigo: drop-shadow(0 0 6px rgba(82, 113, 255, 0.35)); /* softer on light bg */

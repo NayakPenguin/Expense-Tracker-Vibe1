@@ -10,7 +10,6 @@ import BudgetEditorSheet from '../components/profile/BudgetEditorSheet'
 import PaceCoachCard from '../components/home/PaceCoachCard'
 import { useAppData } from '../context/AppDataContext'
 import { useAuth } from '../context/AuthContext'
-import { getMonthLabel } from '../utils/format'
 import { getPaceCoachInsights } from '../utils/paceCoach'
 
 export default function Home() {
@@ -66,17 +65,13 @@ export default function Home() {
 
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
   const daysLeft = Math.max(1, daysInMonth - now.getDate() + 1)
-  const pacePercent = (now.getDate() / daysInMonth) * 100
-
   return (
-    <div>
+    <div className="home-page">
       <HomeHeader name={user?.displayName?.trim().split(/\s+/)[0] || 'there'} />
 
       <SpendingRingCard
-        month={getMonthLabel(now)}
         spent={spentThisMonth}
         percent={percent}
-        pacePercent={pacePercent}
         monthlyBudget={budget.monthlyBudget}
         daysLeft={daysLeft}
         onOpenBudget={() => setBudgetEditorOpen(true)}
@@ -94,6 +89,7 @@ export default function Home() {
         transactions={sortedTransactions.slice(0, 8)}
         categories={categories}
         onSelect={setEditingTransaction}
+        onViewAll={() => navigate('/details')}
       />
 
       {/* One sheet, two modes — a transaction present means edit. */}
