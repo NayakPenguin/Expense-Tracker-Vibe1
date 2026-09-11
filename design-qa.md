@@ -7,11 +7,13 @@
 - Implementation capture: inline CUA browser capture from `http://localhost:4174/#/` using the temporary local Home preview harness; the capture was removed before commit.
 - Implementation viewport: 707 × 912 CSS px; app shell measured 480 px wide and the browser reported device scale factor 1.
 - Density normalization: no resampling; comparison used the app shell content region rather than the source device chrome.
-- State: light Home screen, greeting `Hello, Atanu 👋`, budget ₹30,000, ₹18,750 left, 62% used, three visible recent transactions, and expanded transaction state checked separately.
+- State: light and dark Home screens. Light state used greeting `Hello, Atanu 👋`, budget ₹30,000, ₹18,750 left, and 62% used. Dark state used greeting `Hello, Shirsendu 👋`, budget ₹30,000, ₹30,000 left, and 0% used to match the follow-up bug report.
 
 ## Full-view comparison evidence
 
 The implementation follows the source hierarchy: greeting and notification affordance, split spending summary with progress ring, two stat tiles, Quick actions, Recent transactions, and persistent three-tab navigation. The rendered shell stayed centered and had no horizontal overflow at the browser viewport used for capture.
+
+The dark-mode follow-up capture confirmed that all Home surfaces now switch with the theme instead of retaining light lavender/green backgrounds. Primary and secondary text remained readable against the dark hero, stat tiles, Pace Coach card, action cards, transaction list, and navigation bar.
 
 ## Focused-region comparison evidence
 
@@ -28,6 +30,7 @@ No actionable P0, P1, or P2 findings remain.
 - Fonts and typography: light sans-serif body hierarchy, bold greeting, readable currency scale, and compact transaction metadata match the source intent.
 - Spacing and layout rhythm: responsive grid columns, narrow-screen ring scale, compact action-card breakpoints, safe bottom padding, and fixed navigation were verified; no horizontal overflow was observed.
 - Colors and visual tokens: light surfaces, purple primary accent, green secondary tile, category tints, border, and shadow values are token-driven.
+- Colors and visual tokens: light surfaces, purple primary accent, green secondary tile, category tints, border, and shadow values are token-driven; dark-mode equivalents now provide charcoal, deep-lilac, and deep-green surfaces with readable light text.
 - Image quality and asset fidelity: the source contains standard UI symbols only; the implementation uses the existing icon library and native emoji rendering for the explicitly requested waving-hand emoji.
 - Copy and content: labels match the supplied reference intent, including `Amount left to spend`, `Quick actions`, `View all`, `Reports`, and debit amount formatting.
 
@@ -35,6 +38,7 @@ No actionable P0, P1, or P2 findings remain.
 
 1. Initial render: Quick actions heading was missing, the hand graphic was too small, and the ring remained blue. Fixed by adding the heading, switching to a properly sized native 👋 with an emoji font stack, and adding a purple ring fill override.
 2. Final render: full Home composition and expanded transaction state were re-captured at the same browser viewport. No P0/P1/P2 mismatches or horizontal overflow remained.
+3. Dark-mode follow-up: light-only Home surfaces caused pale cards and low-contrast amounts in dark mode. Added theme-specific surface tokens and theme-aware category icon tinting; the rendered dark Home screen was re-captured with no contrast or overflow blocker.
 
 ## Interaction checks
 

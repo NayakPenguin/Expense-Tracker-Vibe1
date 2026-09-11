@@ -31,15 +31,15 @@
   --bg-elevated: #1E1E27;
   --bg-sheet: #1B1B24;         /* bottom sheets / modals */
 
-  --surface-hero: #F8F6FF;
-  --surface-lilac: #F2EDFF;
-  --surface-green: #F1FBF4;
-  --surface-pink: #FFF0F5;
-  --surface-orange: #FFF5E8;
-  --surface-teal: #ECFAF3;
-  --ring-track: #EDECF2;
+  --surface-hero: #17161F;
+  --surface-lilac: #241B38;
+  --surface-green: #172A21;
+  --surface-pink: #321A28;
+  --surface-orange: #342618;
+  --surface-teal: #172D2D;
+  --ring-track: #2A2A35;
   --surface-icon: rgba(255, 255, 255, 0.12);
-  --shadow-nav: 0 -3px 14px rgba(30, 40, 68, 0.04);
+  --shadow-nav: 0 -3px 14px rgba(0, 0, 0, 0.3);
 
   --text-primary: var(--color-paper);
   --text-secondary: var(--color-slate-mist);

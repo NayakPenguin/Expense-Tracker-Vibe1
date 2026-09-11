@@ -11,7 +11,7 @@
   width: 54px;
   height: 54px;
   border-radius: 18px;
-  background: color-mix(in srgb, var(--category-color) 16%, white);
+  background: color-mix(in srgb, var(--category-color) 18%, var(--bg-card));
   color: var(--category-color);
 }
 
