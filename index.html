@@ -13,12 +13,13 @@
     />
     <!--
       Apply the saved theme before first paint. React mounts too late to avoid
-      a dark flash on light-mode loads. Key must match THEME_STORAGE_KEY in
+      a flash on light-mode loads. Light is the default; choosing dark stores
+      the opt-in override. Key must match THEME_STORAGE_KEY in
       src/context/ThemeContext.jsx.
     -->
     <script>
       try {
-        if (localStorage.getItem('expense-tracker:theme') === 'light') {
+        if (localStorage.getItem('expense-tracker:theme') !== 'dark') {
           document.documentElement.setAttribute('data-theme', 'light')
         }
       } catch (e) {}

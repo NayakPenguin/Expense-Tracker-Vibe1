@@ -15,9 +15,9 @@ export const THEME_STORAGE_KEY = 'expense-tracker:theme'
 
 function readStoredTheme() {
   try {
-    return window.localStorage.getItem(THEME_STORAGE_KEY) === 'light' ? 'light' : 'dark'
+    return window.localStorage.getItem(THEME_STORAGE_KEY) === 'dark' ? 'dark' : 'light'
   } catch {
-    return 'dark'
+    return 'light'
   }
 }
 

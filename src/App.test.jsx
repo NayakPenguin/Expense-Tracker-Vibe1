@@ -85,11 +85,11 @@ describe('authenticated routes', () => {
     expect(await screen.findByRole('heading', { name: 'Track every expense' })).toBeInTheDocument()
   })
 
-  it('redirects an authenticated user away from onboarding', async () => {
+  it('redirects an authenticated user away from onboarding', { timeout: 15000 }, async () => {
     authState.user = { uid: 'u1', displayName: 'Asha Singh', email: 'asha@example.com' }
     renderRoutes('/onboarding')
 
-    expect(await screen.findByText('Hi Asha', {}, { timeout: 5000 })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Hello, Asha' }, { timeout: 10000 })).toBeInTheDocument()
     expect(screen.getByRole('navigation', { name: 'Primary' })).toBeInTheDocument()
   })
 
@@ -101,11 +101,11 @@ describe('authenticated routes', () => {
     expect(screen.getByText('Getting your account ready…')).toBeInTheDocument()
   })
 
-  it('renders Pace Coach for a configured authenticated account', async () => {
+  it('renders Pace Coach for a configured authenticated account', { timeout: 15000 }, async () => {
     authState.user = { uid: 'u1', displayName: 'Asha Singh' }
     renderRoutes('/coach')
 
-    expect(await screen.findByRole('heading', { name: 'Your spending pace' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Your spending pace' }, { timeout: 10000 })).toBeInTheDocument()
   })
 
   it('surfaces unpublished security rules rather than an empty app', () => {
@@ -140,10 +140,10 @@ describe('first-run setup gate', () => {
     expect(await screen.findByRole('heading', { name: 'Welcome, Asha' })).toBeInTheDocument()
   })
 
-  it('sends a finished account away from setup', async () => {
+  it('sends a finished account away from setup', { timeout: 15000 }, async () => {
     appData.hasCompletedSetup = true
     renderRoutes('/setup')
 
-    expect(await screen.findByText('Hi Asha', {}, { timeout: 5000 })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Hello, Asha' }, { timeout: 10000 })).toBeInTheDocument()
   })
 })

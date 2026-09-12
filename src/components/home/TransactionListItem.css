@@ -1,19 +1,42 @@
 .transaction-item__merchant {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
+  font-size: 16px;
   font-weight: 600;
+}
+
+.transaction-item__category-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--category-color) 18%, var(--bg-card));
+  color: var(--category-color);
 }
 
 .transaction-item__amount {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  font-size: 17px;
+  font-weight: 600;
 }
 
-.transaction-item__arrow {
-  display: inline-flex;
+.grouped-list .list-row {
+  gap: 16px;
+  padding: 16px 18px;
+}
+
+.grouped-list .list-row__leading {
+  width: 54px;
+  height: 54px;
+  background: transparent;
+  border-radius: 18px;
+}
+
+.grouped-list .list-row__subtitle {
+  margin-top: 4px;
   color: var(--text-secondary);
-}
-
-.transaction-item__arrow--credit {
-  color: var(--state-success);
+  font-size: 13px;
 }
